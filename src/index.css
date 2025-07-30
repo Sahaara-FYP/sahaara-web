@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -39,6 +40,12 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Custom Theme Colors */
+  --color-app-background: var(--app-background);
+  --color-app-foreground: var(--app-foreground);
+  --color-app-primary-text: var(--app-primary-text);
+  --color-app-secondary-text: var(--app-secondary-text);
 }
 
 :root {
@@ -74,6 +81,12 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Custom Theme Color Variables */
+  --app-background: rgb(240, 240, 240);
+  --app-foreground: rgb(248, 248, 248);
+  --app-primary-text: rgb(20, 20, 20);
+  --app-secondary-text: rgb(130, 130, 130);
 }
 
 .dark {
@@ -108,6 +121,12 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Custom Theme Color Variables */
+  --app-background: rgb(18, 18, 30);
+  --app-foreground: rgb(29, 29, 41);
+  --app-primary-text: rgb(241, 246, 255);
+  --app-secondary-text: rgb(162, 162, 162);
 }
 
 @layer base {
@@ -116,5 +135,12 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Inter", sans-serif;
+  }
+  .central-container {
+    @apply flex items-center justify-center min-h-[100vh];
+  }
+  button {
+    @apply cursor-pointer;
   }
 }

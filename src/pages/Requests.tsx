@@ -1,5 +1,5 @@
 import AllFilters from "@/components/AllFilters";
-import ListTable from "@/components/ListTable";
+import ListTable, { type ColumnConfig } from "@/components/ListTable";
 import { useFetchRequests } from "@/hooks/useFetchRequests";
 import type { RequestType } from "@/types/Requests";
 import { Loader2 } from "lucide-react";
@@ -15,13 +15,21 @@ const Requests = () => {
     requestFemaleOnly: "all",
   });
 
+  const requestColumns = [
+    { label: "ID", accessor: "id" },
+    { label: "User ID", accessor: "user_id" },
+    { label: "Request", accessor: "request_text" },
+    { label: "Category", accessor: "category" },
+    { label: "Urgent", accessor: "is_urgent" },
+    { label: "Status", accessor: "status" },
+  ] satisfies ColumnConfig<RequestType>[];
+
   const { data, isLoading, isError } = useFetchRequests(filters);
-  console.log("🚀 ~ Requests ~ data:", data);
   if (isError)
     return (
-      <>
-        <p>Error while fetching requests</p>
-      </>
+      <div className="w-full h-full flex justify-center items-center gap-3">
+        <span className="text-sm">Error while fetching requests.</span>
+      </div>
     );
 
   if (isLoading)
@@ -39,7 +47,7 @@ const Requests = () => {
         filters={filters}
         setFilters={setFilters}
       />
-      <ListTable<RequestType> data={data} />
+      <ListTable<RequestType> data={data} columns={requestColumns} />
     </div>
   );
 };

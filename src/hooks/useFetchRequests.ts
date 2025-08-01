@@ -5,7 +5,6 @@ import type {
   RequestFilters,
   RequestType,
 } from "@/types/Requests";
-import { useState } from "react";
 
 export async function fetchRequests(
   filters: RequestFilters = {}

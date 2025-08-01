@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 let manualLogout = () => {};
 
@@ -34,7 +35,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (token && adminData) {
       try {
         const decoded = jwtDecode(token);
-        if (!decoded?.exp) return logout();
+        if (!decoded?.exp) {
+          toast.error("Session Expired. Please login again!");
+          return logout();
+        }
         const isExpired = decoded.exp * 1000 < Date.now();
         if (isExpired) logout();
         setAdminDetails(JSON.parse(adminData));

@@ -1,3 +1,5 @@
+import type { UserType } from "./Users";
+
 export interface RequestType {
   id: number;
   user_id: number;
@@ -12,8 +14,7 @@ export interface RequestType {
   willing_to_pay: boolean;
   is_urgent: boolean;
   female_only: boolean;
-  distance_km: number;
-  is_verified: boolean;
+  users: UserType;
 }
 
 export type RequestFilters = {

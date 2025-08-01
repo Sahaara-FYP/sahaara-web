@@ -1,7 +1,7 @@
 interface PaginationProps {
   page: number;
   limit: number;
-  totalCount: number;
+  count: number;
   onPageChange: (newPage: number) => void;
   className?: string;
 }
@@ -9,41 +9,43 @@ interface PaginationProps {
 const Pagination = ({
   page,
   limit,
-  totalCount,
+  count,
   onPageChange,
   className = "",
 }: PaginationProps) => {
-  const totalPages = Math.ceil(totalCount / limit);
-
   const from = (page - 1) * limit + 1;
-  const to = Math.min(page * limit, totalCount);
+  const to = from + count - 1;
+
+  const isFirstPage = page <= 1;
+  const isLastPage = count < limit;
 
   return (
     <div
       className={`flex items-center justify-between flex-wrap gap-2 text-sm ${className}`}
     >
-      {/* Summary */}
       <span className="text-muted-foreground">
-        Showing {from}–{to} of {totalCount}
+        Showing {from}-{to}
       </span>
 
       {/* Page Controls */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <button
-          disabled={page <= 1}
-          className="px-3 py-1 rounded border disabled:opacity-50"
+          disabled={isFirstPage}
+          className={`px-3 py-1 rounded bg-app-primary-color text-white dark:border disabled:opacity-60 ${
+            isFirstPage ? "cursor-not-allowed" : ""
+          }`}
           onClick={() => onPageChange(page - 1)}
         >
           Previous
         </button>
 
-        <span className="px-2 text-muted-foreground">
-          Page {page} of {totalPages}
-        </span>
+        <span className="px-2 text-muted-foreground">Page {page}</span>
 
         <button
-          disabled={page >= totalPages}
-          className="px-3 py-1 rounded border disabled:opacity-50"
+          disabled={isLastPage}
+          className={`px-3 py-1 rounded bg-app-primary-color text-white dark:border disabled:opacity-60 ${
+            isLastPage ? "cursor-not-allowed" : ""
+          }`}
           onClick={() => onPageChange(page + 1)}
         >
           Next

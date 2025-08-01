@@ -46,6 +46,9 @@
   --color-app-foreground: var(--app-foreground);
   --color-app-primary-text: var(--app-primary-text);
   --color-app-secondary-text: var(--app-secondary-text);
+  --color-app-primary-color: var(--app-primary-color);
+  --color-app-primary-hover-color: var(--app-primary-hover-color);
+  --color-app-secondary-color: var(--app-secondary-color);
 }
 
 :root {
@@ -87,6 +90,9 @@
   --app-foreground: rgb(248, 248, 248);
   --app-primary-text: rgb(20, 20, 20);
   --app-secondary-text: rgb(130, 130, 130);
+  --app-primary-color: rgb(13, 57, 120);
+  --app-primary-hover-color: rgb(7, 43, 90);
+  --app-secondary-color: rgb(39, 69, 92);
 }
 
 .dark {
@@ -127,6 +133,9 @@
   --app-foreground: rgb(20, 20, 20);
   --app-primary-text: rgb(241, 246, 255);
   --app-secondary-text: rgb(162, 162, 162);
+  --app-primary-color: rgb(13, 57, 120);
+  --app-primary-hover-color: rgb(7, 43, 90);
+  --app-secondary-color: rgb(37, 105, 184);
 }
 
 @layer base {

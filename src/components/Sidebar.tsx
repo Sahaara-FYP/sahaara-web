@@ -59,7 +59,7 @@ const AppSidebar = () => {
     <Sidebar>
       <SidebarContent className="py-6 px-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="flex gap-2">
+          <SidebarGroupLabel className="flex gap-2 items-center">
             <div>
               <img
                 src="/admin-login-illustration.webp"
@@ -68,7 +68,7 @@ const AppSidebar = () => {
               />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-app-primary-text">
+              <h2 className="text-2xl font-semibold text-app-primary-color dark:text-app-secondary-color">
                 Sahaara
               </h2>
             </div>
@@ -79,7 +79,7 @@ const AppSidebar = () => {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <Link to={item.url} className="pl-4">
-                      <item.icon />
+                      <item.icon className="text-app-primary-color dark:text-app-secondary-color" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -94,7 +94,7 @@ const AppSidebar = () => {
                       logout();
                     }}
                   >
-                    <DoorOpen />
+                    <DoorOpen className="text-app-primary-color dark:text-app-secondary-color" />
                     <span>Logout</span>
                   </a>
                 </SidebarMenuButton>

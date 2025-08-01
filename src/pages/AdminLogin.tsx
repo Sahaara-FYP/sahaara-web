@@ -48,7 +48,12 @@ const AdminLogin = () => {
         <div className="flex flex-col gap-12 flex-1">
           <div className="flex justify-between items-start gap-2 sm:gap-6 max-sm:flex-col">
             <div>
-              <h1 className="text-2xl font-bold">Welcome to Sahaara!</h1>
+              <h1 className="text-2xl font-bold">
+                Welcome to{" "}
+                <span className="text-app-primary-color dark:text-app-secondary-color">
+                  Sahaara
+                </span>
+              </h1>
               <p className="text-app-secondary-text">Enter your credentials</p>
             </div>
             <div className="mt-2">
@@ -81,7 +86,10 @@ const AdminLogin = () => {
               />
             </div>
             <div>
-              <Button className="w-full" disabled={loading}>
+              <Button
+                className="w-full bg-app-primary-color dark:bg-app-primary-color text-white border-0 dark:border hover:bg-app-primary-hover-color hover:text-white"
+                disabled={loading}
+              >
                 <span>
                   <Loader2
                     className={`animate-spin ${!loading ? "hidden" : "block"}`}

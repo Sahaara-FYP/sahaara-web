@@ -1,38 +1,50 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import {
+  Calendar,
+  Home,
+  Inbox,
+  Search,
+  Settings,
+  AlertCircle,
+  CheckCircle,
+  DoorOpen,
+} from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { useAuthContext } from "@/contexts/AuthContext";
+import DarkModeToggle from "./DarkModeToggle";
+import { Link } from "react-router-dom";
 
 // Menu items.
 const items = [
   {
-    title: "Home",
-    url: "#",
+    title: "Dashboard",
+    url: "/admin/dashboard",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
+    title: "Requests",
+    url: "/admin/requests",
     icon: Inbox,
   },
   {
-    title: "Calendar",
+    title: "Alerts",
     url: "#",
-    icon: Calendar,
+    icon: AlertCircle,
   },
   {
-    title: "Search",
+    title: "Verifications",
     url: "#",
-    icon: Search,
+    icon: CheckCircle,
   },
   {
     title: "Settings",
@@ -42,14 +54,15 @@ const items = [
 ];
 
 const AppSidebar = () => {
+  const { logout, adminDetails } = useAuthContext();
   return (
     <Sidebar>
-      <SidebarContent className="py-6 px-6">
+      <SidebarContent className="py-6 px-4">
         <SidebarGroup>
           <SidebarGroupLabel className="flex gap-2">
             <div>
               <img
-                src="/public/admin-login-illustration.webp"
+                src="/admin-login-illustration.webp"
                 width={30}
                 height={30}
               />
@@ -65,17 +78,47 @@ const AppSidebar = () => {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link to={item.url} className="pl-4">
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <a
+                    href={"#"}
+                    className="pl-4"
+                    onClick={() => {
+                      logout();
+                    }}
+                  >
+                    <DoorOpen />
+                    <span>Logout</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="mb-2 flex flex-col gap-4 py-6 pl-6">
+        <div>
+          <DarkModeToggle type="text" />
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-[50%] bg-app-background"></div>
+          <div className="mb-1">
+            <p className="font-semibold">
+              {adminDetails?.full_name || "Administrator"}
+            </p>
+            <p className="text-xs text-app-secondary-text">
+              {adminDetails?.email}
+            </p>
+          </div>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 };

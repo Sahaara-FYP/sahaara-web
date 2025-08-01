@@ -1,8 +1,13 @@
 import DarkModeToggle from "@/components/DarkModeToggle";
 import FormField from "@/components/FormField";
 import { Button } from "@/components/ui/button";
+import { useAuthContext } from "@/contexts/AuthContext";
+import api from "@/lib/api";
+import { Loader, Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type LoginFormInputs = {
   username: string;
@@ -11,6 +16,9 @@ type LoginFormInputs = {
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+  const { login } = useAuthContext();
+
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -18,9 +26,19 @@ const AdminLogin = () => {
     formState: { errors },
   } = useForm<LoginFormInputs>();
 
-  const onSubmit = (data: LoginFormInputs) => {
-    console.log("Login form data:", data);
-    navigate("/admin/dashboard");
+  const onSubmit = async (data: LoginFormInputs) => {
+    try {
+      setLoading(true);
+      const response = await api.post("/auth/admin/login", data);
+      const { admin_details, access_token } = response.data;
+      login(admin_details, access_token);
+      toast.success("Login Successful");
+      navigate("/admin/dashboard");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -57,12 +75,20 @@ const AdminLogin = () => {
                 registration={register("password", {
                   required: "Password is required",
                 })}
+                type="password"
                 error={errors.password}
                 placeholder="Enter your password"
               />
             </div>
             <div>
-              <Button className="w-full">Login</Button>
+              <Button className="w-full" disabled={loading}>
+                <span>
+                  <Loader2
+                    className={`animate-spin ${!loading ? "hidden" : "block"}`}
+                  />
+                </span>
+                Login
+              </Button>
             </div>
           </form>
         </div>

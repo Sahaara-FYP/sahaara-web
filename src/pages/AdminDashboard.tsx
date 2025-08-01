@@ -1,3 +1,5 @@
+import { useFetchRequests } from "@/hooks/useFetchRequests";
+
 const AdminPanel = () => {
   return <div>Hello</div>;
 };

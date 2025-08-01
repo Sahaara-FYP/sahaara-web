@@ -83,7 +83,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /* Custom Theme Color Variables */
-  --app-background: rgb(240, 240, 240);
+  --app-background: rgb(242, 242, 242);
   --app-foreground: rgb(248, 248, 248);
   --app-primary-text: rgb(20, 20, 20);
   --app-secondary-text: rgb(130, 130, 130);
@@ -123,8 +123,8 @@
   --sidebar-ring: oklch(0.556 0 0);
 
   /* Custom Theme Color Variables */
-  --app-background: rgb(18, 18, 30);
-  --app-foreground: rgb(29, 29, 41);
+  --app-background: rgb(12, 12, 12);
+  --app-foreground: rgb(20, 20, 20);
   --app-primary-text: rgb(241, 246, 255);
   --app-secondary-text: rgb(162, 162, 162);
 }

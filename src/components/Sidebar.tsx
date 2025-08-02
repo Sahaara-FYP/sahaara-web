@@ -1,8 +1,6 @@
 import {
-  Calendar,
   Home,
   Inbox,
-  Search,
   Settings,
   AlertCircle,
   CheckCircle,
@@ -87,8 +85,7 @@ const AppSidebar = () => {
               ))}
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <a
-                    href={"#"}
+                  <button
                     className="pl-4"
                     onClick={() => {
                       logout();
@@ -96,7 +93,7 @@ const AppSidebar = () => {
                   >
                     <DoorOpen className="text-app-primary-color dark:text-app-secondary-color" />
                     <span>Logout</span>
-                  </a>
+                  </button>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

@@ -1,7 +1,41 @@
-import { useFetchRequests } from "@/hooks/useFetchRequests";
+import AnalyticSimpleCard from "@/components/AnalyticSimpleCard";
+import { Users } from "lucide-react";
 
 const AdminPanel = () => {
-  return <div>Hello</div>;
+  return (
+    <div className="flex">
+      <div className="flex flex-col gap-5">
+        <div className="flex gap-5">
+          <AnalyticSimpleCard
+            title="Total Users"
+            value={100}
+            caption="Users registered this month"
+            icon={<Users />}
+          />
+          <AnalyticSimpleCard
+            title="Total Users"
+            value={100}
+            caption="Users registered this month"
+            icon={<Users />}
+          />
+        </div>
+        <div className="flex gap-5">
+          <AnalyticSimpleCard
+            title="Total Users"
+            value={100}
+            caption="Users registered this month"
+            icon={<Users />}
+          />
+          <AnalyticSimpleCard
+            title="Total Users"
+            value={100}
+            caption="Users registered this month"
+            icon={<Users />}
+          />
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default AdminPanel;

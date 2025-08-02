@@ -4,8 +4,8 @@ import ListTable, { type ColumnConfig } from "@/components/ListTable";
 import Pagination from "@/components/Pagination";
 import { useFetchRequests } from "@/hooks/useFetchRequests";
 import type { RequestType } from "@/types/Requests";
-import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import DetailedRequest from "@/components/DetailedRequest";
 
 const Requests = () => {
   const [filters, setFilters] = useState({
@@ -17,6 +17,12 @@ const Requests = () => {
     requestFemaleOnly: "all",
   });
   const [page, setPage] = useState(1);
+  const { data, isLoading, isError, isRefetching, refetch } =
+    useFetchRequests(filters);
+  const [viewDetailsToggle, setViewDetailsToggle] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<RequestType | null>(
+    null
+  );
 
   const requestColumns = [
     { label: "User ID", accessor: "user_id" },
@@ -36,9 +42,11 @@ const Requests = () => {
     { label: "Status", accessor: "status" },
   ] satisfies ColumnConfig<RequestType>[];
 
-  const { data, isLoading, isError, isRefetching, refetch } =
-    useFetchRequests(filters);
-  console.log("🚀 ~ Requests ~ data:", data);
+  const viewDetails = (item: RequestType) => {
+    setSelectedRequest(item);
+    setViewDetailsToggle(true);
+  };
+  const deleteRequest = (item: RequestType) => {};
 
   if (isError)
     return (
@@ -63,6 +71,10 @@ const Requests = () => {
               data={data}
               columns={requestColumns}
               refetch={refetch}
+              actionItems={(item) => ({
+                "View Details": () => viewDetails(item),
+                Delete: () => deleteRequest(item),
+              })}
             />
             <Pagination
               page={page}
@@ -73,6 +85,11 @@ const Requests = () => {
           </>
         )}
       </div>
+      <DetailedRequest
+        viewDetailsToggle={viewDetailsToggle}
+        setViewDetailsToggle={setViewDetailsToggle}
+        selectedRequest={selectedRequest}
+      />
     </div>
   );
 };

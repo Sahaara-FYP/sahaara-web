@@ -100,7 +100,7 @@ const AllFilters = ({
                 key={key}
                 className="flex gap-3 items-center justify-between"
               >
-                <span className="text-app-primary-text">{label}</span>
+                <span className="text-app-primary-text text-sm">{label}</span>
                 {component}
               </div>
             ))}

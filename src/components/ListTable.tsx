@@ -13,6 +13,15 @@ import type {
   QueryObserverResult,
   RefetchOptions,
 } from "@tanstack/react-query";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Ellipsis, EllipsisVertical } from "lucide-react";
 
 interface ListTableProps<T> {
   data: PaginatedResponse<T> | undefined;
@@ -21,6 +30,7 @@ interface ListTableProps<T> {
   refetch: (
     options?: RefetchOptions
   ) => Promise<QueryObserverResult<PaginatedResponse<RequestType>, Error>>;
+  actionItems: (item: T) => Record<string, () => void>;
 }
 
 export interface ColumnConfig<T> {
@@ -35,6 +45,7 @@ const ListTable = <T,>({
   caption,
   columns,
   refetch,
+  actionItems,
 }: ListTableProps<T>) => {
   return (
     <div className="">
@@ -69,6 +80,7 @@ const ListTable = <T,>({
                 {col.label}
               </TableHead>
             ))}
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -89,6 +101,22 @@ const ListTable = <T,>({
                   {col.render ? col.render(item) : String(item[col.accessor])}
                 </TableCell>
               ))}
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="ml-3">
+                    <Ellipsis width={20} height={20} />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {Object.entries(actionItems(item)).map(
+                      ([label, handler], idx) => (
+                        <DropdownMenuItem key={idx} onClick={handler}>
+                          {label}
+                        </DropdownMenuItem>
+                      )
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

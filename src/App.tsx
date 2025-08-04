@@ -5,6 +5,7 @@ import AdminPanel from "./pages/AdminDashboard";
 import AdminLayout from "./layouts/AdminLayout";
 import { Toaster } from "sonner";
 import Requests from "./pages/Requests";
+import Alerts from "./pages/Alerts";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminPanel />} />
           <Route path="requests" element={<Requests />} />
+          <Route path="alerts" element={<Alerts />} />
         </Route>
       </Routes>
     </BrowserRouter>

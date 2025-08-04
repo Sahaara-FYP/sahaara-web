@@ -107,7 +107,7 @@ const AllFilters = ({
           </div>
         ) : (
           <>
-            <p>No filters were passed</p>
+            <p className="text-app-primary-text">No filters were passed</p>
           </>
         )}
       </div>

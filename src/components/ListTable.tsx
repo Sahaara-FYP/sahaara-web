@@ -17,11 +17,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Ellipsis, EllipsisVertical } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 
 interface ListTableProps<T> {
   data: PaginatedResponse<T> | undefined;
@@ -121,6 +119,11 @@ const ListTable = <T,>({
           ))}
         </TableBody>
       </Table>
+      {data?.data.length == 0 && (
+        <p className="text-app-primary-text text-center font-semibold w-full text-sm">
+          No data found
+        </p>
+      )}
     </div>
   );
 };

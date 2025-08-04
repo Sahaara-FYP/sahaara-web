@@ -6,6 +6,7 @@ export interface UserType {
   full_name: string;
   gender: string;
   is_verified: boolean;
+  profile_complete: boolean;
   phone: string | null;
   role: string;
 }

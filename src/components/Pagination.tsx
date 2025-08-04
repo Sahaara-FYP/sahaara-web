@@ -13,8 +13,9 @@ const Pagination = ({
   onPageChange,
   className = "",
 }: PaginationProps) => {
-  const from = (page - 1) * limit + 1;
+  let from = (page - 1) * limit + 1;
   const to = from + count - 1;
+  from = to === 0 ? 0 : from;
 
   const isFirstPage = page <= 1;
   const isLastPage = count < limit;

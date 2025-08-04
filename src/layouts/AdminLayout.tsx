@@ -29,7 +29,7 @@ const AdminLayout = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="w-full">
+      <main className="w-full mb-14">
         <SidebarTrigger />
         <div className="mx-10 my-6 h-[45rem]">
           <AdminHeader currentPage={currentPage} />

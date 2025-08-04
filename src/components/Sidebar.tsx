@@ -36,7 +36,7 @@ const items = [
   },
   {
     title: "Alerts",
-    url: "#",
+    url: "/admin/alerts",
     icon: AlertCircle,
   },
   {

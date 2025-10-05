@@ -1,9 +1,10 @@
 import AnalyticSimpleCard from "@/components/AnalyticSimpleCard";
+import { PieChartDonut } from "@/components/PieChartDonut";
 import { Users } from "lucide-react";
 
 const AdminPanel = () => {
   return (
-    <div className="flex">
+    <div className="flex gap-5">
       <div className="flex flex-col gap-5">
         <div className="flex gap-5">
           <AnalyticSimpleCard
@@ -33,6 +34,10 @@ const AdminPanel = () => {
             icon={<Users />}
           />
         </div>
+      </div>
+      <div className="flex gap-5">
+        <PieChartDonut />
+        <PieChartDonut />
       </div>
     </div>
   );

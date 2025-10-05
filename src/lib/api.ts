@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { manualLogout } from "@/contexts/AuthContext";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://192.168.0.36:8000/api",
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 

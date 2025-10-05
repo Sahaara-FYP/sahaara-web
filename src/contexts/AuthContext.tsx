@@ -50,10 +50,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(false);
   }, []);
 
-  const login = (adminData: Admin, accessToken: string) => {
+  const login = (user: any, accessToken: string) => {
     localStorage.setItem("authToken", accessToken);
-    localStorage.setItem("admin", JSON.stringify(adminData));
-    setAdminDetails(adminData);
+    localStorage.setItem("admin", JSON.stringify(user));
+    setAdminDetails(user);
   };
 
   const logout = () => {

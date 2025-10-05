@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 type LoginFormInputs = {
-  username: string;
+  identifier: string;
   password: string;
 };
 
@@ -29,9 +29,9 @@ const AdminLogin = () => {
   const onSubmit = async (data: LoginFormInputs) => {
     try {
       setLoading(true);
-      const response = await api.post("/auth/admin/login", data);
-      const { admin_details, access_token } = response.data;
-      login(admin_details, access_token);
+      const response = await api.post("/auth/login", data);
+      const { message, accessToken, refreshToken, user } = response.data;
+      login(user, accessToken);
       toast.success("Login Successful");
       navigate("/admin/dashboard");
     } catch (error) {
@@ -66,13 +66,13 @@ const AdminLogin = () => {
           >
             <div className="flex flex-col gap-4">
               <FormField
-                label="Username"
-                id="username"
-                registration={register("username", {
-                  required: "Username is required",
+                label="Identifier"
+                id="identifier"
+                registration={register("identifier", {
+                  required: "Identifier is required",
                 })}
-                error={errors.username}
-                placeholder="Enter your username"
+                error={errors.identifier}
+                placeholder="Enter your identifier"
               />
               <FormField
                 label="Password"

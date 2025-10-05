@@ -7,7 +7,7 @@ import type {
 } from "@/types/Requests";
 
 export async function fetchRequests(
-  filters: RequestFilters = {}
+  filters = {}
 ): Promise<PaginatedResponse<RequestType>> {
   const params = new URLSearchParams();
 
@@ -21,7 +21,7 @@ export async function fetchRequests(
   return response.data;
 }
 
-export function useFetchRequests(filters: RequestFilters = {}) {
+export function useFetchRequests(filters = {}) {
   return useQuery<PaginatedResponse<RequestType>>({
     queryKey: ["requests", filters],
     queryFn: () => fetchRequests(filters),

@@ -1,94 +1,273 @@
-import AllFilters from "@/components/AllFilters";
-import FetchingLoader from "@/components/FetchingLoader";
-import ListTable, { type ColumnConfig } from "@/components/ListTable";
-import Pagination from "@/components/Pagination";
-import { useFetchRequests } from "@/hooks/useFetchRequests";
-import type { RequestType } from "@/types/Requests";
 import { useState } from "react";
-import DetailedRequest from "@/components/DetailedRequest";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useFetchRequests } from "@/hooks/useFetchRequests";
+import { StatusBadge } from "@/components/StatusBadge";
+import { RequestDetailsDialog } from "@/components/RequestDetailsDialog";
+import {
+  ModerationStatusItems,
+  RequestCategoryItems,
+  RequestStatusItems,
+  UrgencyLevelItems,
+} from "@/types/Requests";
+import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+
+/* ---------------------------- TYPES ---------------------------- */
+
+type FilterState = {
+  search?: string;
+  category?: string;
+  urgency?: string;
+  status?: string;
+  moderation?: string;
+};
+
+// type representing a single row in the table
+type RequestRow = {
+  title: string;
+  category: string;
+  urgencyLevel: string;
+  status: string;
+  locationLat: number;
+  locationLng: number;
+  participantsCount: number;
+  moderationStatus: string;
+};
+
+// allowed sortable column keys
+const sortableKeys = [
+  "title",
+  "category",
+  "urgencyLevel",
+  "status",
+  "participantsCount",
+  "moderationStatus",
+] as const;
+
+type SortKey = (typeof sortableKeys)[number];
+
+/* ---------------------------- FILTER OPTIONS ---------------------------- */
+
+const filterConfig = {
+  category: Object.values(RequestCategoryItems),
+  urgency: Object.values(UrgencyLevelItems),
+  status: Object.values(RequestStatusItems),
+  moderation: Object.values(ModerationStatusItems),
+} as const;
+
+/* ---------------------------- MAIN COMPONENT ---------------------------- */
 
 const Requests = () => {
-  const [filters, setFilters] = useState({
-    requestCategory: "all",
-    requestIdentity: "all",
-    requestStatus: "all",
-    requestWillingToPay: "all",
-    requestUrgent: "all",
-    requestFemaleOnly: "all",
-  });
-  const [page, setPage] = useState(1);
-  const { data, isLoading, isError, isRefetching, refetch } =
-    useFetchRequests(filters);
-  const [viewDetailsToggle, setViewDetailsToggle] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<RequestType | null>(
-    null
-  );
+  const [filter, setFilter] = useState<FilterState>({});
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<RequestRow | null>(null);
 
-  const requestColumns = [
-    { label: "User ID", accessor: "user_id" },
-    {
-      label: "Requester",
-      accessor: "users",
-      render: (row) => row.users?.full_name ?? "—",
-    },
-    { label: "Request", accessor: "request_text" },
-    { label: "Category", accessor: "category" },
-    {
-      label: "Verified",
-      accessor: "users",
-      render: (row) => (row.users?.is_verified ? "True" : "False"),
-    },
-    { label: "Urgent", accessor: "is_urgent" },
-    { label: "Status", accessor: "status" },
-  ] satisfies ColumnConfig<RequestType>[];
+  const [sortConfig, setSortConfig] = useState<{
+    key: SortKey | null;
+    direction: "asc" | "desc" | null;
+  }>({ key: null, direction: null });
 
-  const viewDetails = (item: RequestType) => {
-    setSelectedRequest(item);
-    setViewDetailsToggle(true);
+  const { data, error, isLoading } = useFetchRequests(filter);
+  if (!data) return null;
+
+  /* ---------------------------- SORT HANDLER ---------------------------- */
+
+  const handleSort = (key: SortKey) => {
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        const newDir =
+          prev.direction === "asc"
+            ? "desc"
+            : prev.direction === "desc"
+            ? null
+            : "asc";
+        return { key, direction: newDir };
+      }
+      return { key, direction: "asc" };
+    });
   };
-  const deleteRequest = (item: RequestType) => {};
 
-  if (isError)
-    return (
-      <div className="w-full h-full flex justify-center items-center gap-3">
-        <span className="text-sm">Error while fetching requests.</span>
-      </div>
+  // sort data locally
+  const sortedData = [...data.data].sort((a: RequestRow, b: RequestRow) => {
+    if (!sortConfig.key || !sortConfig.direction) return 0;
+
+    const valA = a[sortConfig.key];
+    const valB = b[sortConfig.key];
+
+    if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+    if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  /* ---------------------------- SORT ARROW ICON ---------------------------- */
+
+  const SortArrow = ({ column }: { column: SortKey }) => {
+    if (sortConfig.key !== column || !sortConfig.direction)
+      return <ArrowUpDown className="w-3.5 h-3.5 ml-1 text-gray-400" />;
+
+    return sortConfig.direction === "asc" ? (
+      <ArrowUp className="w-3.5 h-3.5 ml-1 text-app-primary-color" />
+    ) : (
+      <ArrowDown className="w-3.5 h-3.5 ml-1 text-app-primary-color" />
     );
+  };
+
+  /* ---------------------------- RENDER ---------------------------- */
 
   return (
-    <div className="flex min-h-full max-xl:flex-col">
-      <AllFilters
-        filterType={"requests"}
-        filters={filters}
-        setFilters={setFilters}
-      />
-      <div className="w-full bg-app-foreground rounded-2xl py-6 pb-10 px-8 border flex flex-col justify-between">
-        {isRefetching || isLoading ? (
-          <FetchingLoader type="requests" />
-        ) : (
-          <>
-            <ListTable<RequestType>
-              data={data}
-              columns={requestColumns}
-              refetch={refetch}
-              actionItems={(item) => ({
-                "View Details": () => viewDetails(item),
-                Delete: () => deleteRequest(item),
-              })}
-            />
-            <Pagination
-              page={page}
-              limit={10}
-              count={data?.count || 0}
-              onPageChange={setPage}
-            />
-          </>
-        )}
+    <div className="space-y-4">
+      {/* Search + Filters */}
+      <div className="flex flex-wrap gap-3 items-center justify-between bg-app-foreground p-4 shadow rounded-lg">
+        <Input
+          placeholder="Search requests..."
+          value={filter.search || ""}
+          onChange={(e) => setFilter({ ...filter, search: e.target.value })}
+          className="w-[260px]"
+        />
+
+        <div className="flex gap-3">
+          {(
+            Object.entries(filterConfig) as [
+              keyof typeof filterConfig,
+              string[]
+            ][]
+          ).map(([key, options]) => (
+            <Select
+              key={key}
+              value={filter[key] || ""}
+              onValueChange={(value) =>
+                setFilter({
+                  ...filter,
+                  [key]: value === "all" ? "" : value,
+                })
+              }
+            >
+              <SelectTrigger className="w-[150px] capitalize">
+                <SelectValue placeholder={key} />
+              </SelectTrigger>
+              <SelectContent>
+                {options.map((opt) => (
+                  <SelectItem key={opt} value={opt}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ))}
+        </div>
       </div>
-      <DetailedRequest
-        viewDetailsToggle={viewDetailsToggle}
-        setViewDetailsToggle={setViewDetailsToggle}
-        selectedRequest={selectedRequest}
+
+      {/* Table */}
+      <Table className="bg-app-foreground shadow-md rounded-xl overflow-hidden">
+        <TableCaption className="text-app-secondary-color text-sm py-4">
+          Recent community requests
+        </TableCaption>
+
+        <TableHeader>
+          <TableRow className="bg-app-background border-b">
+            {[
+              { key: "title", label: "Title", sortable: true },
+              { key: "category", label: "Category", sortable: true },
+              { key: "urgencyLevel", label: "Urgency", sortable: true },
+              { key: "status", label: "Status", sortable: true },
+              { key: "locationLat", label: "Location", sortable: false },
+              { key: "participantsCount", label: "Responses", sortable: true },
+              { key: "moderationStatus", label: "Moderation", sortable: true },
+              { key: "actions", label: "Actions", sortable: false },
+            ].map((col, i) => (
+              <TableHead
+                key={i}
+                onClick={() => col.sortable && handleSort(col.key as SortKey)}
+                className={`px-4 py-3 font-semibold text-app-primary-text cursor-pointer select-none
+                  ${
+                    col.label === "Title"
+                      ? "w-[250px] text-left"
+                      : col.label === "Actions"
+                      ? "text-right w-[150px]"
+                      : "w-[150px] text-center"
+                  }
+                  ${col.sortable ? "hover:text-app-primary-color" : ""}
+                `}
+              >
+                <div className="flex items-center justify-center sm:justify-start">
+                  {col.label}
+                  {col.sortable && <SortArrow column={col.key as SortKey} />}
+                </div>
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {sortedData.map((row, idx) => (
+            <TableRow
+              key={idx}
+              className="odd:bg-app-foreground even:bg-app-background hover:bg-app-background transition-colors text-center"
+            >
+              <TableCell className="px-4 py-3 text-left">{row.title}</TableCell>
+              <TableCell className="px-4 py-3">{row.category}</TableCell>
+              <TableCell className="px-4 py-3 text-app-primary-color font-medium">
+                {row.urgencyLevel}
+              </TableCell>
+              <TableCell className="px-4 py-3">
+                <StatusBadge status={row.status} />
+              </TableCell>
+              <TableCell className="px-4 py-3">
+                {row.locationLat}, {row.locationLng}
+              </TableCell>
+              <TableCell className="px-4 py-3">
+                {row.participantsCount ?? 0}
+              </TableCell>
+              <TableCell className="px-4 py-3">
+                {row.moderationStatus}
+              </TableCell>
+              <TableCell className="px-4 py-3 text-app-secondary-text">
+                <DropdownMenu>
+                  <DropdownMenuTrigger>...</DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSelectedRow(row);
+                        setOpenDialog(true);
+                      }}
+                    >
+                      View Details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>Edit Moderation</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {/* Details Dialog */}
+      <RequestDetailsDialog
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        request={selectedRow}
       />
     </div>
   );

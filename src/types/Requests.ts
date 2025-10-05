@@ -1,20 +1,71 @@
 import type { UserType } from "./Users";
 
+enum RequestCategory {
+  general = "general",
+  shelter = "shelter",
+  food = "food",
+  medical = "medical",
+  transportation = "transportation",
+  financial = "financial",
+  education = "education",
+  employment = "employment",
+  legal = "legal",
+  counseling = "counseling",
+  safety = "safety",
+  other = "other",
+}
+
+enum RequestStatus {
+  pending = "pending",
+  partiallyAccepted = "partially_accepted",
+  accepted = "accepted",
+  completed = "completed",
+  cancelled = "cancelled",
+  expired = "expired",
+}
+
+enum UrgencyLevel {
+  normal = "normal",
+  high = "high",
+  low = "low",
+}
+
+enum ModerationStatus {
+  clean = "clean",
+  flagged = "flagged",
+  reviewed = "reviewed",
+  blocked = "blocked",
+}
+interface Requester {
+  id: string;
+  fullName: string;
+  email: string;
+  username: string | null;
+  profilePictureUrl: string | null;
+}
 export interface RequestType {
-  id: number;
-  user_id: number;
-  request_text: string;
-  category: string;
-  latitude: number;
-  longitude: number;
-  reveal_identity: boolean;
-  status: string;
-  created_at: string;
-  fulfilled_at: string | null;
-  willing_to_pay: boolean;
-  is_urgent: boolean;
-  female_only: boolean;
-  users: UserType;
+  id: string;
+  userId: string;
+  title: string;
+  description: string;
+  category: RequestCategory;
+  urgencyLevel: UrgencyLevel;
+  status: RequestStatus;
+  locationLat: number;
+  locationLng: number;
+  postAnonymously: boolean;
+  visibilityVerifiedOnly: boolean;
+  priorityScore: number;
+  visibilityWomenOnly: boolean;
+  moderationStatus: ModerationStatus;
+  maxHelpers: number;
+  completedAt: Date | null;
+  expiresAt: Date | null;
+  attachments?: Record<string, any>[];
+  createdAt: Date;
+  updatedAt: Date;
+  participantsCount: number;
+  requester: Requester;
 }
 
 export type RequestFilters = {
@@ -33,16 +84,23 @@ export type RequestFilters = {
 
 export interface PaginatedResponse<T> {
   data: T[];
-  page: number;
-  limit: number;
-  count: number;
+  pagination: any;
 }
 
 export const RequestCategoryItems = {
   all: "All",
   general: "General",
-  transport: "Transport",
+  shelter: "Shelter",
+  food: "Food",
   medical: "Medical",
+  transportation: "Transportation",
+  financial: "Financial",
+  education: "Education",
+  employment: "Employment",
+  legal: "Legal",
+  counseling: "Counseling",
+  safety: "Safety",
+  other: "Other",
 };
 
 export const RequestRevealIdentityItems = {
@@ -53,9 +111,27 @@ export const RequestRevealIdentityItems = {
 
 export const RequestStatusItems = {
   all: "All",
-  open: "Open",
-  fulfilled: "Fulfilled",
+  pending: "Pending",
+  partially_accepted: "Partially Accepted",
+  accepted: "Accepted",
+  completed: "Completed",
   cancelled: "Cancelled",
+  expired: "Expired",
+};
+
+export const UrgencyLevelItems = {
+  all: "All",
+  normal: "Normal",
+  high: "High",
+  low: "Low",
+};
+
+export const ModerationStatusItems = {
+  all: "All",
+  clean: "Clean",
+  flagged: "Flagged",
+  reviewed: "Reviewed",
+  blocked: "Blocked",
 };
 
 export const RequestWillingToPayItems = {

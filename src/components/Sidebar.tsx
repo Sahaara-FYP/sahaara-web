@@ -54,8 +54,8 @@ const items = [
 const AppSidebar = () => {
   const { logout, adminDetails } = useAuthContext();
   return (
-    <Sidebar>
-      <SidebarContent className="py-6 px-4">
+    <Sidebar className="h-full">
+      <SidebarContent className="py-6 px-4 h-full">
         <SidebarGroup>
           <SidebarGroupLabel className="flex gap-2 items-center">
             <div>

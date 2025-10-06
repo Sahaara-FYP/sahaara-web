@@ -86,6 +86,8 @@ const Requests = () => {
   console.log("🚀 ~ Requests ~ filter:", filter);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState<RequestRow | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [openEditModeration, setOpenEditModeration] = useState(false);
 
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey | null;
@@ -273,21 +275,41 @@ const Requests = () => {
                 {row.moderationStatus}
               </TableCell>
               <TableCell className="px-4 py-3 text-center text-app-secondary-text">
-                <DropdownMenu>
+                <DropdownMenu
+                  open={openDropdownId === row.id}
+                  onOpenChange={(isOpen) =>
+                    setOpenDropdownId(isOpen ? row.id : null)
+                  }
+                >
                   <DropdownMenuTrigger>...</DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem
                       onClick={() => {
                         setSelectedRow(row);
                         setOpenDialog(true);
+                        setOpenDropdownId(null);
                       }}
                     >
                       View Details
                     </DropdownMenuItem>
-                    <EditModeration request={row} />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSelectedRow(row);
+                        setOpenEditModeration(true); // 👈 NEW state to control modal
+                        setOpenDropdownId(null);
+                      }}
+                    >
+                      Edit Moderation
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
+              {openEditModeration && (
+                <EditModeration
+                  request={row}
+                  onClose={() => setOpenEditModeration(false)}
+                />
+              )}
             </TableRow>
           ))}
         </TableBody>

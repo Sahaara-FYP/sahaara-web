@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -19,12 +18,17 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { DropdownMenuItem } from "./ui/dropdown-menu";
 import { toast } from "sonner";
-import api from "@/lib/api"; // 👈 same axios instance used in login
+import api from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 
-export function EditModeration({ request }: { request: any }) {
+export function EditModeration({
+  request,
+  onClose,
+}: {
+  request: any;
+  onClose: () => void;
+}) {
   const moderationOptions = ["clean", "flagged", "reviewed", "blocked"];
   const remainingOptions = moderationOptions.filter(
     (status) => status !== request.moderationStatus
@@ -38,7 +42,6 @@ export function EditModeration({ request }: { request: any }) {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
       setLoading(true);
       const response = await api.patch("/requests/moderation-status", {
@@ -46,11 +49,11 @@ export function EditModeration({ request }: { request: any }) {
         moderationStatus: selectedStatus,
       });
 
-      const { message } = response.data;
-
-      toast.success(message || "Moderation status updated successfully!");
-
+      toast.success(
+        response.data.message || "Moderation status updated successfully!"
+      );
       queryClient.invalidateQueries({ queryKey: ["requests"] });
+      onClose(); // close dialog after success
     } catch (error: any) {
       console.error(error);
       toast.error(
@@ -62,18 +65,22 @@ export function EditModeration({ request }: { request: any }) {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <DropdownMenuItem
-          onSelect={(e) => {
-            e.preventDefault();
-          }}
-        >
-          Edit Moderation
-        </DropdownMenuItem>
-      </DialogTrigger>
-
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog open onOpenChange={onClose}>
+      <DialogContent
+        className="
+          w-[92vw] sm:w-[85vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw]
+          max-w-3xl 
+          max-h-[85vh] 
+          overflow-y-auto 
+          rounded-xl 
+          shadow-xl
+          bg-app-foreground
+          text-app-primary-text
+          p-4 sm:p-6 md:p-8
+          scrollbar-thin scrollbar-thumb-app-tertiary-color scrollbar-track--app-background
+          scrollbar-thumb-rounded-full scrollbar-track-rounded-full
+        "
+      >
         <form onSubmit={onSubmit}>
           <DialogHeader>
             <DialogTitle>Edit Moderation Status</DialogTitle>

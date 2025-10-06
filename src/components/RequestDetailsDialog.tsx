@@ -1,16 +1,16 @@
+import { StatusBadge } from "@/components/StatusBadge";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { StatusBadge } from "@/components/StatusBadge";
+} from "./ui/dialog";
 
 type RequestDetailsDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  request: any | null; // Replace with your RequestRow type when available
+  request: any | null;
 };
 
 export const RequestDetailsDialog = ({
@@ -22,21 +22,7 @@ export const RequestDetailsDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="
-          w-[92vw] sm:w-[85vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw]
-          max-w-3xl 
-          max-h-[85vh] 
-          overflow-y-auto 
-          rounded-xl 
-          shadow-xl
-          bg-app-foreground
-          text-app-primary-text
-          p-4 sm:p-6 md:p-8
-          scrollbar-thin scrollbar-thumb-app-tertiary-color scrollbar-track--app-background
-          scrollbar-thumb-rounded-full scrollbar-track-rounded-full
-        "
-      >
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-xl sm:text-2xl font-bold text-app-primary-color">
             {request.title}

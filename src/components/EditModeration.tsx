@@ -24,14 +24,16 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export function EditModeration({
   request,
-  onClose,
+  open,
+  onOpenChange,
 }: {
-  request: any;
-  onClose: () => void;
+  request: any | null;
+  onOpenChange: (open: boolean) => void;
+  open: boolean;
 }) {
   const moderationOptions = ["clean", "flagged", "reviewed", "blocked"];
   const remainingOptions = moderationOptions.filter(
-    (status) => status !== request.moderationStatus
+    (status) => status !== request?.moderationStatus
   );
 
   const [selectedStatus, setSelectedStatus] = useState(
@@ -53,7 +55,7 @@ export function EditModeration({
         response.data.message || "Moderation status updated successfully!"
       );
       queryClient.invalidateQueries({ queryKey: ["requests"] });
-      onClose(); // close dialog after success
+      onOpenChange(false);
     } catch (error: any) {
       console.error(error);
       toast.error(
@@ -63,24 +65,11 @@ export function EditModeration({
       setLoading(false);
     }
   };
+  if (!request) return null;
 
   return (
-    <Dialog open onOpenChange={onClose}>
-      <DialogContent
-        className="
-          w-[92vw] sm:w-[85vw] md:w-[70vw] lg:w-[60vw] xl:w-[50vw]
-          max-w-3xl 
-          max-h-[85vh] 
-          overflow-y-auto 
-          rounded-xl 
-          shadow-xl
-          bg-app-foreground
-          text-app-primary-text
-          p-4 sm:p-6 md:p-8
-          scrollbar-thin scrollbar-thumb-app-tertiary-color scrollbar-track--app-background
-          scrollbar-thumb-rounded-full scrollbar-track-rounded-full
-        "
-      >
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
         <form onSubmit={onSubmit}>
           <DialogHeader>
             <DialogTitle>Edit Moderation Status</DialogTitle>

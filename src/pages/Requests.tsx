@@ -83,9 +83,7 @@ const filterConfig = {
 
 const Requests = () => {
   const [filter, setFilter] = useState<FilterState>({});
-  console.log("🚀 ~ Requests ~ filter:", filter);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<RequestRow | null>(null);
+  const [openViewDetailsDialog, setOpenViewDetailsDialog] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [openEditModeration, setOpenEditModeration] = useState(false);
 
@@ -285,8 +283,7 @@ const Requests = () => {
                   <DropdownMenuContent>
                     <DropdownMenuItem
                       onClick={() => {
-                        setSelectedRow(row);
-                        setOpenDialog(true);
+                        setOpenViewDetailsDialog(true);
                         setOpenDropdownId(null);
                       }}
                     >
@@ -294,8 +291,7 @@ const Requests = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => {
-                        setSelectedRow(row);
-                        setOpenEditModeration(true); // 👈 NEW state to control modal
+                        setOpenEditModeration(true);
                         setOpenDropdownId(null);
                       }}
                     >
@@ -304,10 +300,18 @@ const Requests = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
+              {openViewDetailsDialog && (
+                <RequestDetailsDialog
+                  open={openViewDetailsDialog}
+                  onOpenChange={setOpenViewDetailsDialog}
+                  request={row}
+                />
+              )}
               {openEditModeration && (
                 <EditModeration
                   request={row}
-                  onClose={() => setOpenEditModeration(false)}
+                  open={openEditModeration}
+                  onOpenChange={setOpenEditModeration}
                 />
               )}
             </TableRow>
@@ -318,13 +322,6 @@ const Requests = () => {
       <LoaderOverlay
         show={!data || isLoading || isFetching}
         message="Please wait..."
-      />
-
-      {/* Details Dialog */}
-      <RequestDetailsDialog
-        open={openDialog}
-        onOpenChange={setOpenDialog}
-        request={selectedRow}
       />
     </div>
   );

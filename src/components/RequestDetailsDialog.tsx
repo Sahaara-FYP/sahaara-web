@@ -22,7 +22,7 @@ export const RequestDetailsDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-auto">
         <DialogHeader>
           <DialogTitle className="text-xl sm:text-2xl font-bold text-app-primary-color">
             {request.title}
@@ -32,7 +32,7 @@ export const RequestDetailsDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="divide-y divide-app-background border-t border-app-background mt-2">
+        <div className="divide-y divide-app-background border-t border-app-background mt-1">
           {[
             ["Description", request.description || "No description"],
             ["Category", request.category],
@@ -45,7 +45,7 @@ export const RequestDetailsDialog = ({
                 {request.urgencyLevel}
               </span>,
             ],
-            ["Status", <StatusBadge key="status" status={request.status} />],
+            ["Status", <StatusBadge type="status" value={request.status} />],
             [
               "Location",
               `${request.locationLat ?? "—"}, ${request.locationLng ?? "—"}`,
@@ -55,7 +55,13 @@ export const RequestDetailsDialog = ({
             ["Women Only", request.visibilityWomenOnly ? "Yes" : "No"],
             ["Priority Score", request.priorityScore],
             ["Max Helpers", request.maxHelpers],
-            ["Moderation", request.moderationStatus],
+            [
+              "Moderation",
+              <StatusBadge
+                type="moderation"
+                value={request.moderationStatus}
+              />,
+            ],
             [
               "Created",
               request.createdAt

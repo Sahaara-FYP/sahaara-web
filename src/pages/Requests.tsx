@@ -194,10 +194,10 @@ const Requests = () => {
             {[
               { key: "title", label: "Title", sortable: true },
               { key: "category", label: "Category", sortable: true },
-              { key: "urgencyLevel", label: "Urgency", sortable: true },
-              { key: "status", label: "Status", sortable: true },
               { key: "locationLat", label: "Location", sortable: false },
               { key: "participantsCount", label: "Responses", sortable: true },
+              { key: "urgencyLevel", label: "Urgency", sortable: true },
+              { key: "status", label: "Status", sortable: true },
               { key: "moderationStatus", label: "Moderation", sortable: true },
               { key: "actions", label: "Actions", sortable: false },
             ].map((col, i) => (
@@ -234,6 +234,12 @@ const Requests = () => {
               <TableCell className="px-4 py-3 capitalize">
                 {row.category}
               </TableCell>
+              <TableCell className="px-4 py-3">
+                {row.locationLat}, {row.locationLng}
+              </TableCell>
+              <TableCell className="px-4 py-3">
+                {row.participantsCount ?? 0}
+              </TableCell>
               <TableCell
                 className={`
                 px-4 py-3 font-medium capitalize
@@ -249,28 +255,10 @@ const Requests = () => {
                 {row.urgencyLevel}
               </TableCell>
               <TableCell className="px-4 py-3">
-                <StatusBadge status={row.status} />
+                <StatusBadge type="status" value={row.status} />
               </TableCell>
-              <TableCell className="px-4 py-3">
-                {row.locationLat}, {row.locationLng}
-              </TableCell>
-              <TableCell className="px-4 py-3">
-                {row.participantsCount ?? 0}
-              </TableCell>
-              <TableCell
-                className={`px-4 py-3 font-medium capitalize ${
-                  row.moderationStatus === "clean"
-                    ? "text-green-600"
-                    : row.moderationStatus === "flagged"
-                    ? "text-yellow-600"
-                    : row.moderationStatus === "reviewed"
-                    ? "text-app-primary-color"
-                    : row.moderationStatus === "blocked"
-                    ? "text-red-600"
-                    : "text-app-secondary-text"
-                }`}
-              >
-                {row.moderationStatus}
+              <TableCell>
+                <StatusBadge type="moderation" value={row.moderationStatus} />
               </TableCell>
               <TableCell className="px-4 py-3 text-center text-app-secondary-text">
                 <DropdownMenu

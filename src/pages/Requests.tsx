@@ -32,15 +32,18 @@ import {
   UrgencyLevelItems,
 } from "@/types/Requests";
 import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { camelToWords } from "./../utils/Normalise";
+import LoaderOverlay from "@/components/Loader";
+import { EditModeration } from "@/components/EditModeration";
 
 /* ---------------------------- TYPES ---------------------------- */
 
 type FilterState = {
   search?: string;
   category?: string;
-  urgency?: string;
+  urgencyLevel?: string;
   status?: string;
-  moderation?: string;
+  moderationStatus?: string;
 };
 
 // type representing a single row in the table
@@ -71,15 +74,16 @@ type SortKey = (typeof sortableKeys)[number];
 
 const filterConfig = {
   category: Object.values(RequestCategoryItems),
-  urgency: Object.values(UrgencyLevelItems),
+  urgencyLevel: Object.values(UrgencyLevelItems),
   status: Object.values(RequestStatusItems),
-  moderation: Object.values(ModerationStatusItems),
+  moderationStatus: Object.values(ModerationStatusItems),
 } as const;
 
 /* ---------------------------- MAIN COMPONENT ---------------------------- */
 
 const Requests = () => {
   const [filter, setFilter] = useState<FilterState>({});
+  console.log("🚀 ~ Requests ~ filter:", filter);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRow, setSelectedRow] = useState<RequestRow | null>(null);
 
@@ -88,7 +92,8 @@ const Requests = () => {
     direction: "asc" | "desc" | null;
   }>({ key: null, direction: null });
 
-  const { data, error, isLoading } = useFetchRequests(filter);
+  const { data, error, isLoading, isFetching, isPending } =
+    useFetchRequests(filter);
   if (!data) return null;
 
   /* ---------------------------- SORT HANDLER ---------------------------- */
@@ -164,11 +169,11 @@ const Requests = () => {
               }
             >
               <SelectTrigger className="w-[150px] capitalize">
-                <SelectValue placeholder={key} />
+                <SelectValue placeholder={camelToWords(key)[0]} />
               </SelectTrigger>
               <SelectContent>
                 {options.map((opt) => (
-                  <SelectItem key={opt} value={opt}>
+                  <SelectItem className="capitalize" key={opt} value={opt}>
                     {opt}
                   </SelectItem>
                 ))}
@@ -223,11 +228,24 @@ const Requests = () => {
           {sortedData.map((row, idx) => (
             <TableRow
               key={idx}
-              className="odd:bg-app-foreground even:bg-app-background hover:bg-app-background transition-colors text-center"
+              className="odd:bg-app-foreground even:bg-app-background hover:bg-app-background transition-colors "
             >
               <TableCell className="px-4 py-3 text-left">{row.title}</TableCell>
-              <TableCell className="px-4 py-3">{row.category}</TableCell>
-              <TableCell className="px-4 py-3 text-app-primary-color font-medium">
+              <TableCell className="px-4 py-3 capitalize">
+                {row.category}
+              </TableCell>
+              <TableCell
+                className={`
+                px-4 py-3 font-medium capitalize
+                ${
+                  row.urgencyLevel === "high"
+                    ? "text-red-600"
+                    : row.urgencyLevel === "low"
+                    ? "text-yellow-600"
+                    : "text-green-600"
+                }
+              `}
+              >
                 {row.urgencyLevel}
               </TableCell>
               <TableCell className="px-4 py-3">
@@ -239,10 +257,22 @@ const Requests = () => {
               <TableCell className="px-4 py-3">
                 {row.participantsCount ?? 0}
               </TableCell>
-              <TableCell className="px-4 py-3">
+              <TableCell
+                className={`px-4 py-3 font-medium capitalize ${
+                  row.moderationStatus === "clean"
+                    ? "text-green-600"
+                    : row.moderationStatus === "flagged"
+                    ? "text-yellow-600"
+                    : row.moderationStatus === "reviewed"
+                    ? "text-app-primary-color"
+                    : row.moderationStatus === "blocked"
+                    ? "text-red-600"
+                    : "text-app-secondary-text"
+                }`}
+              >
                 {row.moderationStatus}
               </TableCell>
-              <TableCell className="px-4 py-3 text-app-secondary-text">
+              <TableCell className="px-4 py-3 text-center text-app-secondary-text">
                 <DropdownMenu>
                   <DropdownMenuTrigger>...</DropdownMenuTrigger>
                   <DropdownMenuContent>
@@ -254,7 +284,7 @@ const Requests = () => {
                     >
                       View Details
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Edit Moderation</DropdownMenuItem>
+                    <EditModeration request={row} />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
@@ -262,6 +292,11 @@ const Requests = () => {
           ))}
         </TableBody>
       </Table>
+
+      <LoaderOverlay
+        show={!data || isLoading || isFetching}
+        message="Please wait..."
+      />
 
       {/* Details Dialog */}
       <RequestDetailsDialog

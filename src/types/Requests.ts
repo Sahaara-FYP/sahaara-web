@@ -88,66 +88,66 @@ export interface PaginatedResponse<T> {
 }
 
 export const RequestCategoryItems = {
-  all: "All",
-  general: "General",
-  shelter: "Shelter",
-  food: "Food",
-  medical: "Medical",
-  transportation: "Transportation",
-  financial: "Financial",
-  education: "Education",
-  employment: "Employment",
-  legal: "Legal",
-  counseling: "Counseling",
-  safety: "Safety",
-  other: "Other",
+  all: "all",
+  general: "general",
+  shelter: "shelter",
+  food: "food",
+  medical: "medical",
+  transportation: "transportation",
+  financial: "financial",
+  education: "education",
+  employment: "employment",
+  legal: "legal",
+  counseling: "counseling",
+  safety: "safety",
+  other: "other",
 };
 
 export const RequestRevealIdentityItems = {
-  all: "All",
-  true: "True",
-  false: "False",
+  all: "all",
+  true: "true",
+  false: "false",
 };
 
 export const RequestStatusItems = {
-  all: "All",
-  pending: "Pending",
-  partially_accepted: "Partially Accepted",
-  accepted: "Accepted",
-  completed: "Completed",
-  cancelled: "Cancelled",
-  expired: "Expired",
+  all: "all",
+  pending: "pending",
+  partially_accepted: "partially_accepted",
+  accepted: "accepted",
+  completed: "completed",
+  cancelled: "cancelled",
+  expired: "expired",
 };
 
 export const UrgencyLevelItems = {
-  all: "All",
-  normal: "Normal",
-  high: "High",
-  low: "Low",
+  all: "all",
+  normal: "normal",
+  high: "high",
+  low: "low",
 };
 
 export const ModerationStatusItems = {
-  all: "All",
-  clean: "Clean",
-  flagged: "Flagged",
-  reviewed: "Reviewed",
-  blocked: "Blocked",
+  all: "all",
+  clean: "clean",
+  flagged: "flagged",
+  reviewed: "reviewed",
+  blocked: "blocked",
 };
 
 export const RequestWillingToPayItems = {
-  all: "All",
-  true: "True",
-  false: "False",
+  all: "all",
+  true: "true",
+  false: "false",
 };
 
 export const RequestUrgentItems = {
-  all: "All",
-  true: "True",
-  false: "False",
+  all: "all",
+  true: "true",
+  false: "false",
 };
 
 export const RequestFemaleOnlyItems = {
-  all: "All",
-  true: "True",
-  false: "False",
+  all: "all",
+  true: "true",
+  false: "false",
 };

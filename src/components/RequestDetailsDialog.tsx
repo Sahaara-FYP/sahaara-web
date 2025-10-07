@@ -6,11 +6,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
+import type { RequestType } from "@/types/Requests";
 
 type RequestDetailsDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  request: any | null;
+  request: RequestType;
 };
 
 export const RequestDetailsDialog = ({

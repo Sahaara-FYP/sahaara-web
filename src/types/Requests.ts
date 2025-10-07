@@ -1,6 +1,6 @@
 import type { UserType } from "./Users";
 
-enum RequestCategory {
+export enum RequestCategory {
   general = "general",
   shelter = "shelter",
   food = "food",
@@ -15,7 +15,7 @@ enum RequestCategory {
   other = "other",
 }
 
-enum RequestStatus {
+export enum RequestStatus {
   pending = "pending",
   partiallyAccepted = "partially_accepted",
   accepted = "accepted",
@@ -24,19 +24,19 @@ enum RequestStatus {
   expired = "expired",
 }
 
-enum UrgencyLevel {
+export enum UrgencyLevel {
   normal = "normal",
   high = "high",
   low = "low",
 }
 
-enum ModerationStatus {
+export enum ModerationStatus {
   clean = "clean",
   flagged = "flagged",
   reviewed = "reviewed",
   blocked = "blocked",
 }
-interface Requester {
+export interface Requester {
   id: string;
   fullName: string;
   email: string;

@@ -21,17 +21,18 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { ModerationStatus, type RequestType } from "@/types/Requests";
 
 export function EditModeration({
   request,
   open,
   onOpenChange,
 }: {
-  request: any | null;
+  request: RequestType;
   onOpenChange: (open: boolean) => void;
   open: boolean;
 }) {
-  const moderationOptions = ["clean", "flagged", "reviewed", "blocked"];
+  const moderationOptions = Object.values(ModerationStatus);
   const remainingOptions = moderationOptions.filter(
     (status) => status !== request?.moderationStatus
   );
@@ -44,6 +45,12 @@ export function EditModeration({
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (selectedStatus === request.moderationStatus) {
+      toast.error(
+        `Moderation status for this request is already ${request.moderationStatus}`
+      );
+      return;
+    }
     try {
       setLoading(true);
       const response = await api.patch("/requests/moderation-status", {
@@ -69,7 +76,7 @@ export function EditModeration({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-h-[90vh] overflow-auto">
         <form onSubmit={onSubmit}>
           <DialogHeader>
             <DialogTitle>Edit Moderation Status</DialogTitle>
@@ -95,7 +102,9 @@ export function EditModeration({
               <Select
                 name="moderation"
                 value={selectedStatus}
-                onValueChange={setSelectedStatus}
+                onValueChange={(value) =>
+                  setSelectedStatus(value as ModerationStatus)
+                }
               >
                 <SelectTrigger id="moderation">
                   <SelectValue placeholder="Select moderation status" />
@@ -127,7 +136,11 @@ export function EditModeration({
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={loading}>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="bg-app-primary-color hover:bg-app-primary-hover-color"
+            >
               {loading ? "Saving..." : "Save changes"}
             </Button>
           </DialogFooter>

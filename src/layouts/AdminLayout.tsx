@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 import AdminHeader from "@/components/AdminHeader";
+import LoaderOverlay from "@/components/Loader";
 
 const AdminLayout = () => {
   const { isAuthenticated, loading } = useAuthContext();
@@ -16,12 +17,7 @@ const AdminLayout = () => {
     }
   }, [isAuthenticated, navigate, loading]);
 
-  if (loading)
-    return (
-      <div className="central-container">
-        <Loader2 className="animate-spin" />
-      </div>
-    );
+  if (loading) return <LoaderOverlay show={true} />;
   if (!isAuthenticated) return null;
 
   const currentPage = window.location.pathname.split("/")[2];
@@ -29,9 +25,9 @@ const AdminLayout = () => {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="flex-1 overflow-hidden mb-14">
+      <main className="flex-1 overflow-hidden">
         <SidebarTrigger />
-        <div className="mx-10 my-6">
+        <div className="mx-4 md:mx-10 my-6">
           <AdminHeader currentPage={currentPage} />
           <Outlet />
         </div>

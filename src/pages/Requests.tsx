@@ -30,11 +30,14 @@ import {
   RequestCategoryItems,
   RequestStatusItems,
   UrgencyLevelItems,
+  type RequestType,
 } from "@/types/Requests";
-import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { camelToWords } from "./../utils/Normalise";
 import LoaderOverlay from "@/components/Loader";
 import { EditModeration } from "@/components/EditModeration";
+import { handleSort } from "@/utils/sortHandler";
+import { SortArrow } from "@/components/SortArrow";
+import { MoreVertical } from "lucide-react";
 
 /* ---------------------------- TYPES ---------------------------- */
 
@@ -44,18 +47,6 @@ type FilterState = {
   urgencyLevel?: string;
   status?: string;
   moderationStatus?: string;
-};
-
-// type representing a single row in the table
-type RequestRow = {
-  title: string;
-  category: string;
-  urgencyLevel: string;
-  status: string;
-  locationLat: number;
-  locationLng: number;
-  participantsCount: number;
-  moderationStatus: string;
 };
 
 // allowed sortable column keys
@@ -86,35 +77,23 @@ const Requests = () => {
   const [openViewDetailsDialog, setOpenViewDetailsDialog] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [openEditModeration, setOpenEditModeration] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<RequestType>(
+    {} as RequestType
+  );
 
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey | null;
     direction: "asc" | "desc" | null;
   }>({ key: null, direction: null });
 
-  const { data, error, isLoading, isFetching, isPending } =
+  const { data, error, isLoading, isFetching, isPending, isRefetching } =
     useFetchRequests(filter);
-  if (!data) return null;
+  if (!data) return <LoaderOverlay show={true} message="Please wait..." />;
+  if (error) return <p>Error! Please try again later</p>;
 
-  /* ---------------------------- SORT HANDLER ---------------------------- */
+  /* ---------------------------- SORTED DATA ---------------------------- */
 
-  const handleSort = (key: SortKey) => {
-    setSortConfig((prev) => {
-      if (prev.key === key) {
-        const newDir =
-          prev.direction === "asc"
-            ? "desc"
-            : prev.direction === "desc"
-            ? null
-            : "asc";
-        return { key, direction: newDir };
-      }
-      return { key, direction: "asc" };
-    });
-  };
-
-  // sort data locally
-  const sortedData = [...data.data].sort((a: RequestRow, b: RequestRow) => {
+  const sortedData = [...data.data].sort((a: RequestType, b: RequestType) => {
     if (!sortConfig.key || !sortConfig.direction) return 0;
 
     const valA = a[sortConfig.key];
@@ -125,23 +104,13 @@ const Requests = () => {
     return 0;
   });
 
-  /* ---------------------------- SORT ARROW ICON ---------------------------- */
-
-  const SortArrow = ({ column }: { column: SortKey }) => {
-    if (sortConfig.key !== column || !sortConfig.direction)
-      return <ArrowUpDown className="w-3.5 h-3.5 ml-1 text-gray-400" />;
-
-    return sortConfig.direction === "asc" ? (
-      <ArrowUp className="w-3.5 h-3.5 ml-1 text-app-primary-color" />
-    ) : (
-      <ArrowDown className="w-3.5 h-3.5 ml-1 text-app-primary-color" />
-    );
-  };
-
   /* ---------------------------- RENDER ---------------------------- */
 
   return (
     <div className="space-y-4">
+      <LoaderOverlay
+        show={isLoading || isFetching || isPending || isRefetching}
+      />
       {/* Search + Filters */}
       <div className="flex flex-wrap gap-3 items-center justify-between bg-app-foreground p-4 shadow rounded-lg">
         <Input
@@ -151,7 +120,7 @@ const Requests = () => {
           className="w-[260px]"
         />
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           {(
             Object.entries(filterConfig) as [
               keyof typeof filterConfig,
@@ -184,13 +153,13 @@ const Requests = () => {
       </div>
 
       {/* Table */}
-      <Table className="bg-app-foreground shadow-md rounded-xl overflow-hidden">
+      <Table className="bg-app-foreground shadow-md overflow-hidden rounded-lg">
         <TableCaption className="text-app-secondary-color text-sm py-4">
           Recent community requests
         </TableCaption>
 
         <TableHeader>
-          <TableRow className="bg-app-background border-b">
+          <TableRow className="bg-app-foreground border-b">
             {[
               { key: "title", label: "Title", sortable: true },
               { key: "category", label: "Category", sortable: true },
@@ -203,21 +172,34 @@ const Requests = () => {
             ].map((col, i) => (
               <TableHead
                 key={i}
-                onClick={() => col.sortable && handleSort(col.key as SortKey)}
+                onClick={() =>
+                  col.sortable && handleSort(col.key as SortKey, setSortConfig)
+                }
                 className={`px-4 py-3 font-semibold text-app-primary-text cursor-pointer select-none
                   ${
                     col.label === "Title"
                       ? "w-[250px] text-left"
                       : col.label === "Actions"
-                      ? "text-right w-[150px]"
+                      ? "text-right w-[150px] justify-end"
                       : "w-[150px] text-center"
                   }
                   ${col.sortable ? "hover:text-app-primary-color" : ""}
                 `}
               >
-                <div className="flex items-center justify-center sm:justify-start">
+                <div
+                  className={`flex items-center ${
+                    col.label === "Actions"
+                      ? "justify-center"
+                      : "justify-center sm:justify-start"
+                  }`}
+                >
                   {col.label}
-                  {col.sortable && <SortArrow column={col.key as SortKey} />}
+                  {col.sortable && (
+                    <SortArrow
+                      column={col.key as SortKey}
+                      sortConfig={sortConfig}
+                    />
+                  )}
                 </div>
               </TableHead>
             ))}
@@ -228,7 +210,7 @@ const Requests = () => {
           {sortedData.map((row, idx) => (
             <TableRow
               key={idx}
-              className="odd:bg-app-foreground even:bg-app-background hover:bg-app-background transition-colors "
+              className="hover:bg-app-background/70 transition-colors "
             >
               <TableCell className="px-4 py-3 text-left">{row.title}</TableCell>
               <TableCell className="px-4 py-3 capitalize">
@@ -267,10 +249,15 @@ const Requests = () => {
                     setOpenDropdownId(isOpen ? row.id : null)
                   }
                 >
-                  <DropdownMenuTrigger>...</DropdownMenuTrigger>
+                  <DropdownMenuTrigger asChild>
+                    <button className="p-1 rounded-sm hover:bg-app-background transition">
+                      <MoreVertical className="w-5 h-5 text-app-primary-text" />
+                    </button>
+                  </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem
                       onClick={() => {
+                        setSelectedRow(row);
                         setOpenViewDetailsDialog(true);
                         setOpenDropdownId(null);
                       }}
@@ -279,6 +266,7 @@ const Requests = () => {
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => {
+                        setSelectedRow(row);
                         setOpenEditModeration(true);
                         setOpenDropdownId(null);
                       }}
@@ -288,29 +276,25 @@ const Requests = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
-              {openViewDetailsDialog && (
-                <RequestDetailsDialog
-                  open={openViewDetailsDialog}
-                  onOpenChange={setOpenViewDetailsDialog}
-                  request={row}
-                />
-              )}
-              {openEditModeration && (
-                <EditModeration
-                  request={row}
-                  open={openEditModeration}
-                  onOpenChange={setOpenEditModeration}
-                />
-              )}
             </TableRow>
           ))}
         </TableBody>
       </Table>
 
-      <LoaderOverlay
-        show={!data || isLoading || isFetching}
-        message="Please wait..."
-      />
+      {openViewDetailsDialog && (
+        <RequestDetailsDialog
+          open={openViewDetailsDialog}
+          onOpenChange={setOpenViewDetailsDialog}
+          request={selectedRow}
+        />
+      )}
+      {openEditModeration && (
+        <EditModeration
+          request={selectedRow}
+          open={openEditModeration}
+          onOpenChange={setOpenEditModeration}
+        />
+      )}
     </div>
   );
 };

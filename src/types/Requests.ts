@@ -84,7 +84,16 @@ export type RequestFilters = {
 
 export interface PaginatedResponse<T> {
   data: T[];
-  pagination: any;
+  pagination: PaginationType;
+}
+
+export interface PaginationType {
+  total: number;
+  page: number;
+  totalPages: number;
+  limit: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 }
 
 export const RequestCategoryItems = {

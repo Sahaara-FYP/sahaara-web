@@ -38,6 +38,7 @@ import { EditModeration } from "@/components/EditModeration";
 import { handleSort } from "@/utils/sortHandler";
 import { SortArrow } from "@/components/SortArrow";
 import { MoreVertical } from "lucide-react";
+import Pagination from "@/components/Pagination";
 
 /* ---------------------------- TYPES ---------------------------- */
 
@@ -47,6 +48,8 @@ type FilterState = {
   urgencyLevel?: string;
   status?: string;
   moderationStatus?: string;
+  limit?: number;
+  offset?: number;
 };
 
 // allowed sortable column keys
@@ -73,7 +76,7 @@ const filterConfig = {
 /* ---------------------------- MAIN COMPONENT ---------------------------- */
 
 const Requests = () => {
-  const [filter, setFilter] = useState<FilterState>({});
+  const [filter, setFilter] = useState<FilterState>({ limit: 20, offset: 0 });
   const [openViewDetailsDialog, setOpenViewDetailsDialog] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [openEditModeration, setOpenEditModeration] = useState(false);
@@ -105,6 +108,13 @@ const Requests = () => {
   });
 
   /* ---------------------------- RENDER ---------------------------- */
+
+  const handlePageChange = (newPage: number) => {
+    setFilter((prev) => ({
+      ...prev,
+      offset: (newPage - 1) * (prev.limit || 20),
+    }));
+  };
 
   return (
     <div className="space-y-4">
@@ -154,7 +164,7 @@ const Requests = () => {
 
       {/* Table */}
       <Table className="bg-app-foreground shadow-md overflow-hidden rounded-lg">
-        <TableCaption className="text-app-secondary-color text-sm py-4">
+        <TableCaption className="text-app-secondary-color text-sm py-2">
           Recent community requests
         </TableCaption>
 
@@ -222,19 +232,8 @@ const Requests = () => {
               <TableCell className="px-4 py-3">
                 {row.participantsCount ?? 0}
               </TableCell>
-              <TableCell
-                className={`
-                px-4 py-3 font-medium capitalize
-                ${
-                  row.urgencyLevel === "high"
-                    ? "text-red-600"
-                    : row.urgencyLevel === "low"
-                    ? "text-yellow-600"
-                    : "text-green-600"
-                }
-              `}
-              >
-                {row.urgencyLevel}
+              <TableCell>
+                <StatusBadge type="urgency" value={row.urgencyLevel} />
               </TableCell>
               <TableCell className="px-4 py-3">
                 <StatusBadge type="status" value={row.status} />
@@ -242,7 +241,7 @@ const Requests = () => {
               <TableCell>
                 <StatusBadge type="moderation" value={row.moderationStatus} />
               </TableCell>
-              <TableCell className="px-4 py-3 text-center text-app-secondary-text">
+              <TableCell className="px-4 py-3 text-center text-app-secondary-text ">
                 <DropdownMenu
                   open={openDropdownId === row.id}
                   onOpenChange={(isOpen) =>
@@ -278,8 +277,17 @@ const Requests = () => {
               </TableCell>
             </TableRow>
           ))}
+          {sortedData.length === 0 && (
+            <TableCell colSpan={8} className="py-4 text-center w-full">
+              No Requests Found
+            </TableCell>
+          )}
         </TableBody>
       </Table>
+      <Pagination
+        pagination={data.pagination}
+        onPageChange={handlePageChange}
+      />
 
       {openViewDetailsDialog && (
         <RequestDetailsDialog

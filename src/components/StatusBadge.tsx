@@ -50,7 +50,9 @@ export const StatusBadge = ({
   const colorClass = theme[value.toLowerCase()] || theme.default;
 
   return (
-    <Badge className={`${colorClass} capitalize px-2 py-1 ${className}`}>
+    <Badge
+      className={`${colorClass} min-w-[5rem] capitalize px-2 py-1 ${className}`}
+    >
       {value}
     </Badge>
   );

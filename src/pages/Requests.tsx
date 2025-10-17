@@ -29,6 +29,7 @@ import {
   ModerationStatusItems,
   RequestCategoryItems,
   RequestStatusItems,
+  TrueFalseDropdownItems,
   UrgencyLevelItems,
   type RequestType,
 } from "@/types/Requests";
@@ -37,8 +38,9 @@ import LoaderOverlay from "@/components/Loader";
 import { EditModeration } from "@/components/EditModeration";
 import { handleSort } from "@/utils/sortHandler";
 import { SortArrow } from "@/components/SortArrow";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, Search } from "lucide-react";
 import Pagination from "@/components/Pagination";
+import { Button } from "@/components/ui/button";
 
 /* ---------------------------- TYPES ---------------------------- */
 
@@ -48,6 +50,9 @@ type FilterState = {
   urgencyLevel?: string;
   status?: string;
   moderationStatus?: string;
+  postAnonymously?: string;
+  visibilityVerifiedOnly?: string;
+  visibilityWomenOnly?: string;
   limit?: number;
   offset?: number;
 };
@@ -71,18 +76,22 @@ const filterConfig = {
   urgencyLevel: Object.values(UrgencyLevelItems),
   status: Object.values(RequestStatusItems),
   moderationStatus: Object.values(ModerationStatusItems),
+  postAnonymously: Object.values(TrueFalseDropdownItems),
+  visibilityVerifiedOnly: Object.values(TrueFalseDropdownItems),
+  visibilityWomenOnly: Object.values(TrueFalseDropdownItems),
 } as const;
 
 /* ---------------------------- MAIN COMPONENT ---------------------------- */
 
 const Requests = () => {
-  const [filter, setFilter] = useState<FilterState>({ limit: 20, offset: 0 });
+  const [filter, setFilter] = useState<FilterState>({ limit: 10, offset: 0 });
   const [openViewDetailsDialog, setOpenViewDetailsDialog] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [openEditModeration, setOpenEditModeration] = useState(false);
   const [selectedRow, setSelectedRow] = useState<RequestType>(
     {} as RequestType
   );
+  const [search, setSearch] = useState("");
 
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey | null;
@@ -91,6 +100,7 @@ const Requests = () => {
 
   const { data, error, isLoading, isFetching, isPending, isRefetching } =
     useFetchRequests(filter);
+  console.log("🚀 ~ Requests ~ data:", data);
   if (!data) return <LoaderOverlay show={true} message="Please wait..." />;
   if (error) return <p>Error! Please try again later</p>;
 
@@ -116,49 +126,94 @@ const Requests = () => {
     }));
   };
 
+  const handleSearch = () => {
+    setFilter((prev) => ({ ...prev, search }));
+  };
+
   return (
     <div className="space-y-4">
       <LoaderOverlay
         show={isLoading || isFetching || isPending || isRefetching}
       />
       {/* Search + Filters */}
-      <div className="flex flex-wrap gap-3 items-center justify-between bg-app-foreground p-4 shadow rounded-lg">
-        <Input
-          placeholder="Search requests..."
-          value={filter.search || ""}
-          onChange={(e) => setFilter({ ...filter, search: e.target.value })}
-          className="w-[260px]"
-        />
-
-        <div className="flex gap-3 flex-wrap">
-          {(
-            Object.entries(filterConfig) as [
-              keyof typeof filterConfig,
-              string[]
-            ][]
-          ).map(([key, options]) => (
-            <Select
-              key={key}
-              value={filter[key] || ""}
-              onValueChange={(value) =>
-                setFilter({
-                  ...filter,
-                  [key]: value === "all" ? "" : value,
-                })
-              }
+      <div className="bg-app-foreground p-4 shadow rounded-lg">
+        <div className="grid gap-4 sm:grid-cols-3 items-center">
+          {/* Search Input */}
+          <div className="flex flex-col gap-2">
+            <div className="relative">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={18}
+              />
+              <Input
+                placeholder="Search requests..."
+                value={search || ""}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSearch();
+                }}
+                className="w-full pl-9"
+              />
+            </div>
+            <Button
+              className="w-full bg-app-primary-color hover:bg-app-primary-hover-color"
+              onClick={handleSearch}
             >
-              <SelectTrigger className="w-[150px] capitalize">
-                <SelectValue placeholder={camelToWords(key)[0]} />
-              </SelectTrigger>
-              <SelectContent>
-                {options.map((opt) => (
-                  <SelectItem className="capitalize" key={opt} value={opt}>
-                    {opt}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ))}
+              Search
+            </Button>
+          </div>
+
+          {/* Filters Section */}
+          <div
+            className="
+        grid 
+        grid-cols-1 
+        sm:grid-cols-2 
+        md:grid-cols-2 
+        lg:grid-cols-3 
+        xl:grid-cols-4 
+        gap-3
+        col-span-2
+      "
+          >
+            {(
+              Object.entries(filterConfig) as [
+                keyof typeof filterConfig,
+                string[]
+              ][]
+            ).map(([key, options]) => (
+              <Select
+                key={key}
+                value={filter[key] || ""}
+                onValueChange={(value) =>
+                  setFilter({
+                    ...filter,
+                    [key]: value === "all" ? "" : value,
+                  })
+                }
+              >
+                <SelectTrigger className="w-full capitalize">
+                  <SelectValue
+                    placeholder={
+                      key === "postAnonymously"
+                        ? camelToWords(key)[1]
+                        : key === "visibilityVerifiedOnly" ||
+                          key === "visibilityWomenOnly"
+                        ? camelToWords(key).slice(1, 3).join(" ")
+                        : camelToWords(key)[0]
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {options.map((opt) => (
+                    <SelectItem className="capitalize" key={opt} value={opt}>
+                      {opt}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -222,7 +277,12 @@ const Requests = () => {
               key={idx}
               className="hover:bg-app-background/70 transition-colors "
             >
-              <TableCell className="px-4 py-3 text-left">{row.title}</TableCell>
+              <TableCell
+                className="px-4 py-3 text-left w-[200px] max-w-[200px] truncate whitespace-nowrap overflow-hidden"
+                title={row.title}
+              >
+                {row.title}
+              </TableCell>
               <TableCell className="px-4 py-3 capitalize">
                 {row.category}
               </TableCell>

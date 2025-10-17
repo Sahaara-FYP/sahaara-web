@@ -61,7 +61,7 @@ export interface RequestType {
   maxHelpers: number;
   completedAt: Date | null;
   expiresAt: Date | null;
-  attachments?: Record<string, any>[];
+  attachments?: string[];
   createdAt: Date;
   updatedAt: Date;
   participantsCount: number;
@@ -112,7 +112,7 @@ export const RequestCategoryItems = {
   other: "other",
 };
 
-export const RequestRevealIdentityItems = {
+export const TrueFalseDropdownItems = {
   all: "all",
   true: "true",
   false: "false",

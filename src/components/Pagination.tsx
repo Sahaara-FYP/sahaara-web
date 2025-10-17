@@ -53,13 +53,13 @@ export default function AppPagination({
       </span>
 
       <Pagination className="justify-end">
-        <PaginationContent className="space-x-5">
+        <PaginationContent className="space-x-1">
           <PaginationItem>
             <PaginationPrevious
               onClick={() => hasPrevPage && onPageChange(page - 1)}
               className={`${
                 !hasPrevPage ? "pointer-events-none opacity-50" : ""
-              } bg-app-primary-color border-none text-white hover:text-white hover:bg-app-primary-hover-color`}
+              } bg-app-primary-color border-none text-white hover:text-white hover:bg-app-primary-hover-color cursor-pointer`}
             />
           </PaginationItem>
           <div className="flex gap-1">
@@ -71,8 +71,8 @@ export default function AppPagination({
                     isActive={num === page}
                     className={
                       num === page
-                        ? "bg-app-primary-color border-none text-white hover:text-white hover:bg-app-primary-hover-color"
-                        : "bg-app-foreground border"
+                        ? "bg-app-primary-color border-none text-white hover:text-white hover:bg-app-primary cursor-default"
+                        : "bg-app-foreground border hover:bg-neutral-200 cursor-pointer"
                     }
                   >
                     {num}
@@ -91,7 +91,7 @@ export default function AppPagination({
               onClick={() => hasNextPage && onPageChange(page + 1)}
               className={`${
                 !hasNextPage ? "pointer-events-none opacity-50" : ""
-              } bg-app-primary-color border-none text-white hover:text-white hover:bg-app-primary-hover-color`}
+              } bg-app-primary-color border-none text-white hover:text-white hover:bg-app-primary-hover-color cursor-pointer`}
             />
           </PaginationItem>
         </PaginationContent>

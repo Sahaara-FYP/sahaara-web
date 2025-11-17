@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -41,6 +41,7 @@ import { SortArrow } from "@/components/SortArrow";
 import { MoreVertical, Search } from "lucide-react";
 import Pagination from "@/components/Pagination";
 import { Button } from "@/components/ui/button";
+import { useOutletContext } from "react-router-dom";
 
 /* ---------------------------- TYPES ---------------------------- */
 
@@ -68,6 +69,10 @@ const sortableKeys = [
 ] as const;
 
 type SortKey = (typeof sortableKeys)[number];
+
+type AdminContext = {
+  setResetFilters: (fn: () => void) => void;
+};
 
 /* ---------------------------- FILTER OPTIONS ---------------------------- */
 
@@ -98,6 +103,17 @@ const Requests = () => {
     direction: "asc" | "desc" | null;
   }>({ key: null, direction: null });
 
+  const { setResetFilters } = useOutletContext<AdminContext>();
+
+  function handleResetFilters() {
+    setFilter({ limit: 10, offset: 0 });
+    setSearch("");
+  }
+
+  useEffect(() => {
+    setResetFilters(() => handleResetFilters);
+  }, []);
+
   const { data, error, isLoading, isFetching, isPending, isRefetching } =
     useFetchRequests(filter);
   console.log("🚀 ~ Requests ~ data:", data);
@@ -116,6 +132,8 @@ const Requests = () => {
     if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
     return 0;
   });
+
+  /* ---------------------------- RESET FILTER ---------------------------- */
 
   /* ---------------------------- RENDER ---------------------------- */
 
@@ -356,11 +374,14 @@ const Requests = () => {
           request={selectedRow}
         />
       )}
-      {openEditModeration && (
+      {openEditModeration && selectedRow && (
         <EditModeration
-          request={selectedRow}
           open={openEditModeration}
           onOpenChange={setOpenEditModeration}
+          item={selectedRow}
+          type="request"
+          endpoint="/requests/moderation-status"
+          queryKey="requests"
         />
       )}
     </div>

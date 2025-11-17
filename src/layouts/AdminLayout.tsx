@@ -1,15 +1,15 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/Sidebar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { Loader2 } from "lucide-react";
 import AdminHeader from "@/components/AdminHeader";
 import LoaderOverlay from "@/components/Loader";
 
 const AdminLayout = () => {
   const { isAuthenticated, loading } = useAuthContext();
   const navigate = useNavigate();
+  const [resetFilters, setResetFilters] = useState<(() => void) | undefined>();
 
   useEffect(() => {
     if (!isAuthenticated && !loading) {
@@ -28,8 +28,11 @@ const AdminLayout = () => {
       <main className="flex-1 overflow-hidden">
         <SidebarTrigger />
         <div className="mx-4 md:mx-10 my-6">
-          <AdminHeader currentPage={currentPage} />
-          <Outlet />
+          <AdminHeader
+            currentPage={currentPage}
+            onResetFilters={resetFilters}
+          />
+          <Outlet context={{ setResetFilters }} />
         </div>
       </main>
     </SidebarProvider>

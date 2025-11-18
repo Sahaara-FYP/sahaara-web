@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Pie, PieChart } from "recharts";
 
 import {
@@ -18,73 +19,70 @@ import {
 
 import type { ChartConfig } from "@/components/ui/chart";
 
-export const description = "A donut chart";
-
 const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  { label: "Chrome", value: 275, fill: "var(--chart-1)" },
+  { label: "Safari", value: 200, fill: "var(--chart-2)" },
+  { label: "Firefox", value: 187, fill: "var(--chart-3)" },
+  { label: "Edge", value: 173, fill: "var(--chart-4)" },
+  { label: "Other", value: 90, fill: "var(--chart-5)" },
 ];
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
-  },
-  chrome: {
-    label: "Chrome",
-    color: "var(--chart-1)",
-  },
-  safari: {
-    label: "Safari",
-    color: "var(--chart-2)",
-  },
-  firefox: {
-    label: "Firefox",
-    color: "var(--chart-3)",
-  },
-  edge: {
-    label: "Edge",
-    color: "var(--chart-4)",
-  },
-  other: {
-    label: "Other",
-    color: "var(--chart-5)",
-  },
+  value: { label: "Users" },
 } satisfies ChartConfig;
 
-const screenWidth = typeof window !== "undefined" ? window.innerWidth : 1024;
-
-const innerRadius =
-  screenWidth > 1580 ? 40 : screenWidth < 1580 && screenWidth > 760 ? 50 : 40;
-const outerRadius =
-  screenWidth > 1580 ? 70 : screenWidth < 1580 && screenWidth > 760 ? 80 : 80;
 export function PieChartDonut() {
+  const [radius, setRadius] = useState({
+    inner: 45,
+    outer: 75,
+  });
+
+  useEffect(() => {
+    const updateRadius = () => {
+      const width = window.innerWidth;
+
+      if (width > 1600) {
+        setRadius({ inner: 55, outer: 85 });
+      } else if (width > 1024) {
+        setRadius({ inner: 35, outer: 60 });
+      } else if (width > 640) {
+        setRadius({ inner: 35, outer: 55 });
+      } else {
+        setRadius({ inner: 30, outer: 50 });
+      }
+    };
+
+    updateRadius();
+    window.addEventListener("resize", updateRadius);
+    return () => window.removeEventListener("resize", updateRadius);
+  }, []);
+
   return (
-    <Card className="flex flex-col">
-      <CardHeader className="items-center pb-0 ">
-        <h3>Users</h3>
-        <CardTitle>4890</CardTitle>
+    <Card className="flex flex-col w-full max-w-full overflow-hidden">
+      <CardHeader className="items-center pb-0 text-center">
+        <h3 className="text-sm text-gray-600">Users</h3>
+        <CardTitle className="text-3xl font-semibold">4890</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
 
-      <CardContent className="flex-1 pb-0">
+      <CardContent className="flex-1 pb-4 flex justify-center items-center">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square w-full max-w-[170px] sm:max-w-[150px] xs:max-w-[120px]"
+          className="mx-auto aspect-square w-[110px] sm:w-[110px] md:w-[120px]"
         >
           <PieChart>
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
+
             <Pie
               data={chartData}
-              dataKey="visitors"
-              nameKey="browser"
-              innerRadius={innerRadius}
-              outerRadius={outerRadius}
+              dataKey="value"
+              nameKey="label"
+              innerRadius={radius.inner}
+              outerRadius={radius.outer}
+              paddingAngle={2}
             />
           </PieChart>
         </ChartContainer>

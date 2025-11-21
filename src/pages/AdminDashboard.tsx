@@ -1,7 +1,15 @@
-import { Users, Bell, ClipboardList, AlertTriangle } from "lucide-react";
+import {
+  Users,
+  Bell,
+  ClipboardList,
+  AlertTriangle,
+  Timer,
+  CheckCircle,
+} from "lucide-react";
 import AnalyticSimpleCard from "@/components/AnalyticSimpleCard";
 import { PieChartDonut } from "@/components/PieChartDonut";
 import { RequestsTrendChart } from "@/components/RequestsTrendChart";
+import { PeakHoursChart } from "@/components/PeakHoursChart";
 
 const AdminDashboard = () => {
   const stats = {
@@ -9,6 +17,8 @@ const AdminDashboard = () => {
     pendingVerifications: 42,
     activeAlerts: 18,
     totalUsers: 1200,
+    avgResponseTime: "8 min",
+    completionRate: "76%",
   };
 
   const recentRequests = [
@@ -54,7 +64,7 @@ const AdminDashboard = () => {
   return (
     <div className="w-full flex flex-col gap-8">
       {/* TOP CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-5">
         <AnalyticSimpleCard
           title="Total Requests"
           value={stats.totalRequests}
@@ -82,9 +92,34 @@ const AdminDashboard = () => {
           caption="Registered users"
           icon={<Users />}
         />
+
+        {/* NEW CARD — Avg Response Time */}
+        <AnalyticSimpleCard
+          title="Avg Response Time"
+          value={stats.avgResponseTime}
+          caption="Across all requests"
+          icon={<Timer />}
+        />
+
+        {/* NEW CARD — Completion Rate */}
+        <AnalyticSimpleCard
+          title="Completion Rate"
+          value={stats.completionRate}
+          caption="Requests completed"
+          icon={<CheckCircle />}
+        />
       </div>
+
       {/* ANALYTICS TREND CHART */}
       <RequestsTrendChart />
+
+      {/* NEW — PEAK HOURS CHART */}
+      <div className="bg-app-foreground rounded-xl shadow p-5">
+        <h2 className="text-xl font-semibold mb-4 text-app-primary-text">
+          Peak Activity Hours
+        </h2>
+        <PeakHoursChart />
+      </div>
 
       {/* REQUESTS + PIE CHART */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -117,8 +152,7 @@ const AdminDashboard = () => {
                         : req.status === "In Progress"
                         ? "bg-blue-100 text-blue-700"
                         : "bg-green-100 text-green-700"
-                    }
-                  `}
+                    }`}
                 >
                   {req.status}
                 </span>

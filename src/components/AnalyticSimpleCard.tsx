@@ -1,7 +1,7 @@
 interface AnalyticSimpleCardProps {
   title: string;
   icon: React.ReactNode;
-  value: number;
+  value: string | number;
   caption: string;
 }
 

@@ -17,6 +17,8 @@ const badgeColorSchemes: Record<BadgeType, Record<string, string>> = {
       "bg-[var(--app-tertiary-color)]/20 text-[var(--app-tertiary-color)] border border-[var(--app-tertiary-color)]",
     accepted:
       "bg-[var(--app-primary-color)]/20 text-[var(--app-primary-color)] border border-[var(--app-primary-color)]",
+    active:
+      "bg-[var(--app-primary-color)]/20 text-[var(--app-primary-color)] border border-[var(--app-primary-color)]",
     completed: "bg-green-500/20 text-green-700 border border-green-500",
     cancelled: "bg-red-500/20 text-red-700 border border-red-500",
     expired: "bg-gray-500/20 text-gray-700 border border-gray-500",

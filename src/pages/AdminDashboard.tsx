@@ -15,7 +15,6 @@ import LoaderOverlay from "@/components/Loader";
 
 const AdminDashboard = () => {
   const { data, error, isFetching } = useAnalytics();
-  console.log("🚀 ~ AdminDashboard ~ data:", data);
 
   if (!data) return <LoaderOverlay show={true} message="Please wait..." />;
   if (isFetching) return <LoaderOverlay show={true} message="Please wait..." />;
@@ -108,6 +107,7 @@ const AdminDashboard = () => {
           value={data.totalCompletionRate}
           caption="Completed Items"
           icon={<CheckCircle />}
+          unit="%"
         />
       </div>
 

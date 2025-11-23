@@ -10,7 +10,7 @@ export const useAnalytics = () => {
   return useQuery({
     queryKey: ["dashboard"],
     queryFn: fetchAnalytics,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 15 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 };

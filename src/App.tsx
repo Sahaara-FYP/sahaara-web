@@ -10,7 +10,7 @@ import Alerts from "./pages/Alerts";
 const App = () => {
   return (
     <BrowserRouter>
-      <Toaster position="top-center" closeButton={true} />
+      <Toaster position="top-right" closeButton={true} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin/login" element={<AdminLogin />} />

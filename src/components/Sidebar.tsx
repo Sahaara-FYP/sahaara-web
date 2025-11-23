@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuthContext } from "@/contexts/AuthContext";
 import DarkModeToggle from "./DarkModeToggle";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 // Menu items.
 const items = [
@@ -53,6 +53,8 @@ const items = [
 
 const AppSidebar = () => {
   const { logout, adminDetails } = useAuthContext();
+
+  const location = useLocation();
   return (
     <Sidebar className="h-full ">
       <SidebarContent className="py-6 px-4 h-full ">
@@ -74,10 +76,23 @@ const AppSidebar = () => {
           <SidebarGroupContent className="mt-8">
             <SidebarMenu className="flex flex-col gap-2">
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link to={item.url} className="pl-4">
-                      <item.icon className="text-app-primary-color dark:text-app-secondary-color" />
+                <SidebarMenuItem key={item.title} className="">
+                  <SidebarMenuButton
+                    asChild
+                    className={`${
+                      location.pathname === item.url
+                        ? "bg-app-primary-color text-white font-semibold hover:bg-app-primary-color hover:text-white"
+                        : ""
+                    }`}
+                  >
+                    <Link to={item.url} className={`pl-4`}>
+                      <item.icon
+                        className={`${
+                          location.pathname === item.url
+                            ? "text-white dark:text-white"
+                            : "text-app-primary-color"
+                        }  dark:text-app-secondary-color`}
+                      />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>

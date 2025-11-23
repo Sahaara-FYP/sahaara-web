@@ -8,13 +8,14 @@ import {
 } from "recharts";
 
 export const PeakHoursChart = () => {
+  //WILL ATTACH WITH BACKEND LATER
   const data = [
-    { hour: "6 AM", requests: 12 },
-    { hour: "9 AM", requests: 28 },
-    { hour: "12 PM", requests: 40 },
-    { hour: "3 PM", requests: 34 },
-    { hour: "6 PM", requests: 48 },
-    { hour: "9 PM", requests: 22 },
+    { hour: "12:00 am - 4:00 am", requests: 12, alerts: 20 },
+    { hour: "4:00 am - 8:00 am", requests: 28, alerts: 120 },
+    { hour: "8:00 am - 12:00 am", requests: 40, alerts: 40 },
+    { hour: "12:00 pm - 4:00 pm", requests: 34, alerts: 60 },
+    { hour: "4:00 pm - 8:00 pm", requests: 48, alerts: 70 },
+    { hour: "8:00 pm - 12:00 pm", requests: 22, alerts: 10 },
   ];
 
   return (
@@ -24,7 +25,8 @@ export const PeakHoursChart = () => {
           <XAxis dataKey="hour" />
           <YAxis />
           <Tooltip />
-          <Bar dataKey="requests" fill="#4f46e5" radius={[6, 6, 0, 0]} />
+          <Bar dataKey="requests" fill="blue" radius={[6, 6, 0, 0]} />
+          <Bar dataKey="alerts" fill="red" radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

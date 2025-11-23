@@ -10,16 +10,16 @@ import AnalyticSimpleCard from "@/components/AnalyticSimpleCard";
 import { PieChartDonut } from "@/components/PieChartDonut";
 import { RequestsTrendChart } from "@/components/RequestsTrendChart";
 import { PeakHoursChart } from "@/components/PeakHoursChart";
+import { useAnalytics } from "@/hooks/useFetchAnalytics";
+import LoaderOverlay from "@/components/Loader";
 
 const AdminDashboard = () => {
-  const stats = {
-    totalRequests: 254,
-    pendingVerifications: 42,
-    activeAlerts: 18,
-    totalUsers: 1200,
-    avgResponseTime: "8 min",
-    completionRate: "76%",
-  };
+  const { data, error, isFetching } = useAnalytics();
+  console.log("🚀 ~ AdminDashboard ~ data:", data);
+
+  if (!data) return <LoaderOverlay show={true} message="Please wait..." />;
+  if (isFetching) return <LoaderOverlay show={true} message="Please wait..." />;
+  if (error) return <p>Error! Please try again later</p>;
 
   const recentRequests = [
     {
@@ -66,52 +66,53 @@ const AdminDashboard = () => {
       {/* TOP CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-5">
         <AnalyticSimpleCard
-          title="Total Requests"
-          value={stats.totalRequests}
+          title="Active Requests"
+          value={data.activeRequests}
           caption="Requests received"
           icon={<ClipboardList />}
         />
 
         <AnalyticSimpleCard
           title="Pending Verifications"
-          value={stats.pendingVerifications}
+          value={data.pendingVerifications}
           caption="Users needing review"
           icon={<Users />}
         />
 
         <AnalyticSimpleCard
           title="Active Alerts"
-          value={stats.activeAlerts}
+          value={data.activeAlerts}
           caption="Alerts requiring attention"
           icon={<AlertTriangle />}
         />
 
         <AnalyticSimpleCard
           title="Total Users"
-          value={stats.totalUsers}
+          value={data.totalUsers}
           caption="Registered users"
           icon={<Users />}
         />
 
         {/* NEW CARD — Avg Response Time */}
         <AnalyticSimpleCard
-          title="Avg Response Time"
-          value={stats.avgResponseTime}
+          title="Avg First-Response Time"
+          value={data.averageFirstResponseTime.value}
           caption="Across all requests"
           icon={<Timer />}
+          unit={data.averageFirstResponseTime.unit}
         />
 
         {/* NEW CARD — Completion Rate */}
         <AnalyticSimpleCard
           title="Completion Rate"
-          value={stats.completionRate}
-          caption="Requests completed"
+          value={data.totalCompletionRate}
+          caption="Completed Items"
           icon={<CheckCircle />}
         />
       </div>
 
       {/* ANALYTICS TREND CHART */}
-      <RequestsTrendChart />
+      <RequestsTrendChart trendData={data.trendData} />
 
       {/* NEW — PEAK HOURS CHART */}
       <div className="bg-app-foreground rounded-xl shadow p-5">

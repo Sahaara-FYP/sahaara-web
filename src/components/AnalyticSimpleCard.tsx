@@ -3,6 +3,7 @@ interface AnalyticSimpleCardProps {
   icon: React.ReactNode;
   value: string | number;
   caption: string;
+  unit?: string;
 }
 
 const AnalyticSimpleCard = ({
@@ -10,6 +11,7 @@ const AnalyticSimpleCard = ({
   icon,
   value,
   caption,
+  unit,
 }: AnalyticSimpleCardProps) => {
   return (
     <div className="bg-app-foreground p-5 flex flex-col gap-2 rounded-2xl border w-full h-full">
@@ -18,7 +20,10 @@ const AnalyticSimpleCard = ({
         <div className="max-md:hidden w-5 h-5">{icon}</div>
       </div>
 
-      <p className="font-bold text-2xl">{value}</p>
+      <p className="font-bold text-2xl">
+        {value}
+        {unit}
+      </p>
 
       <p className="text-sm text-app-secondary-text">{caption}</p>
     </div>

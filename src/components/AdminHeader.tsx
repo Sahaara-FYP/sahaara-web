@@ -21,7 +21,7 @@ const AdminHeader = ({ currentPage, onResetFilters }: AdminHeaderPropTypes) => {
 
         <div className="flex items-center gap-2">
           {/* RESET FILTERS BUTTON */}
-          {onResetFilters && (
+          {onResetFilters && currentPage != "dashboard" && (
             <Button
               onClick={onResetFilters}
               variant="outline"

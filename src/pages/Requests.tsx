@@ -118,6 +118,7 @@ const Requests = () => {
     useFetchRequests(filter);
   console.log("🚀 ~ Requests ~ data:", data);
   if (!data) return <LoaderOverlay show={true} message="Please wait..." />;
+  if (isFetching) return <LoaderOverlay show={true} message="Please wait..." />;
   if (error) return <p>Error! Please try again later</p>;
 
   /* ---------------------------- SORTED DATA ---------------------------- */
@@ -150,9 +151,6 @@ const Requests = () => {
 
   return (
     <div className="space-y-4">
-      <LoaderOverlay
-        show={isLoading || isFetching || isPending || isRefetching}
-      />
       {/* Search + Filters */}
       <div className="bg-app-foreground p-4 shadow rounded-lg">
         <div className="grid gap-4 sm:grid-cols-3 items-center">

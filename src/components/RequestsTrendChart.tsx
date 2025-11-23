@@ -24,27 +24,23 @@ import {
 
 import type { ChartConfig } from "@/components/ui/chart";
 
-const trendData = [
-  { month: "Jan", requests: 120 },
-  { month: "Feb", requests: 180 },
-  { month: "Mar", requests: 150 },
-  { month: "Apr", requests: 220 },
-  { month: "May", requests: 260 },
-  { month: "Jun", requests: 310 },
-];
-
 const chartConfig = {
   requests: {
     label: "Requests",
   },
+  alerts: {
+    label: "Alerts",
+  },
 } satisfies ChartConfig;
 
-export const RequestsTrendChart = () => {
+export const RequestsTrendChart = ({ trendData }) => {
   return (
     <Card className="bg-[var(--app-foreground)] shadow rounded-xl w-full">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold ">Requests Trend</CardTitle>
-        <CardDescription>Monthly request activity (Jan - Jun)</CardDescription>
+        <CardTitle className="text-xl font-semibold ">
+          Activities Trend
+        </CardTitle>
+        <CardDescription>Monthly activity trend</CardDescription>
       </CardHeader>
 
       <CardContent className="p-6 w-full h-[350px]">
@@ -58,7 +54,15 @@ export const RequestsTrendChart = () => {
               <Line
                 type="monotone"
                 dataKey="requests"
-                stroke="var(--app-primary-color)"
+                stroke="blue"
+                strokeWidth={3}
+                activeDot={{ r: 6 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="alerts"
+                name="Alerts"
+                stroke="red"
                 strokeWidth={3}
                 activeDot={{ r: 6 }}
               />

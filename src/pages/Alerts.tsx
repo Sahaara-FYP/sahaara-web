@@ -46,6 +46,7 @@ import {
 } from "@/types/Alerts";
 import { AlertDetailsDialog } from "@/components/AlertsDetailsDialog";
 import { useOutletContext } from "react-router-dom";
+import { timeAgo } from "@/utils/timeAgo";
 
 /* ---------------------------- TYPES ---------------------------- */
 
@@ -67,6 +68,7 @@ const sortableKeys = [
   "urgencyLevel",
   "status",
   "moderationStatus",
+  "createdAt",
 ] as const;
 
 type SortKey = (typeof sortableKeys)[number];
@@ -230,7 +232,7 @@ const Alerts = () => {
             {[
               { key: "title", label: "Title", sortable: true },
               { key: "category", label: "Category", sortable: true },
-              { key: "locationLat", label: "Location", sortable: false },
+              { key: "createdAt", label: "Posted At", sortable: true },
               { key: "urgencyLevel", label: "Urgency", sortable: true },
               { key: "status", label: "Status", sortable: true },
               { key: "moderationStatus", label: "Moderation", sortable: true },
@@ -288,7 +290,7 @@ const Alerts = () => {
                 {row.category}
               </TableCell>
               <TableCell className="px-4 py-3">
-                {row.locationLat}, {row.locationLng}
+                {timeAgo(row.createdAt)}
               </TableCell>
               <TableCell>
                 <StatusBadge type="urgency" value={row.urgencyLevel} />
@@ -337,7 +339,7 @@ const Alerts = () => {
           ))}
           {sortedData.length === 0 && (
             <TableCell colSpan={8} className="py-4 text-center w-full">
-              No Requests Found
+              No Alerts Found
             </TableCell>
           )}
         </TableBody>

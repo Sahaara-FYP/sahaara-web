@@ -42,6 +42,7 @@ import { MoreVertical, Search } from "lucide-react";
 import Pagination from "@/components/Pagination";
 import { Button } from "@/components/ui/button";
 import { useOutletContext } from "react-router-dom";
+import { timeAgo } from "@/utils/timeAgo";
 
 /* ---------------------------- TYPES ---------------------------- */
 
@@ -66,6 +67,7 @@ const sortableKeys = [
   "status",
   "participantsCount",
   "moderationStatus",
+  "createdAt",
 ] as const;
 
 type SortKey = (typeof sortableKeys)[number];
@@ -244,7 +246,7 @@ const Requests = () => {
             {[
               { key: "title", label: "Title", sortable: true },
               { key: "category", label: "Category", sortable: true },
-              { key: "locationLat", label: "Location", sortable: false },
+              { key: "createdAt", label: "Posted At", sortable: true },
               { key: "participantsCount", label: "Responses", sortable: true },
               { key: "urgencyLevel", label: "Urgency", sortable: true },
               { key: "status", label: "Status", sortable: true },
@@ -303,7 +305,7 @@ const Requests = () => {
                 {row.category}
               </TableCell>
               <TableCell className="px-4 py-3">
-                {row.locationLat}, {row.locationLng}
+                {timeAgo(row.createdAt)}
               </TableCell>
               <TableCell className="px-4 py-3">
                 {row.participantsCount ?? 0}

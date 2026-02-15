@@ -122,9 +122,7 @@ const AdminDashboard = () => {
         <PeakHoursChart />
       </div>
 
-      {/* REQUESTS + PIE CHART */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Requests */}
+      {/* <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-app-foreground rounded-xl shadow p-5 col-span-2">
           <h2 className="text-xl font-semibold mb-3 text-app-primary-text">
             Recent Requests
@@ -162,7 +160,6 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Pie Chart */}
         <div className="bg-app-foreground rounded-xl col-span-2 lg:col-span-1 shadow p-5 overflow-hidden">
           <h2 className="text-xl font-semibold mb-4 text-app-primary-text">
             Request Categories
@@ -171,7 +168,6 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* ACTIVE ALERTS */}
       <div className="bg-app-foreground rounded-xl shadow p-5">
         <h2 className="text-xl font-semibold mb-3 text-app-primary-text">
           Active Alerts
@@ -195,7 +191,7 @@ const AdminDashboard = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

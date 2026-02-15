@@ -22,6 +22,7 @@ const badgeColorSchemes: Record<BadgeType, Record<string, string>> = {
     completed: "bg-green-500/20 text-green-700 border border-green-500",
     cancelled: "bg-red-500/20 text-red-700 border border-red-500",
     expired: "bg-gray-500/20 text-gray-700 border border-gray-500",
+    resolved: "bg-green-500/20 text-green-700 border border-green-500",
   },
 
   moderation: {

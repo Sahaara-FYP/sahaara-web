@@ -18,6 +18,7 @@ const DarkModeToggle = ({ type = "icon" }: DarkModeToggleProps) => {
             toggleTheme();
           }}
           checked={theme === "dark"}
+          className="[&>span]:bg-app-primary-color"
         />
       </div>
       <div className="mb-1.5">

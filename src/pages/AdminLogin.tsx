@@ -1,16 +1,24 @@
 import DarkModeToggle from "@/components/DarkModeToggle";
 import FormField from "@/components/FormField";
 import { Button } from "@/components/ui/button";
+import { useAuthContext } from "@/contexts/AuthContext";
+import api from "@/lib/api";
+import { Loader, Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type LoginFormInputs = {
-  username: string;
+  identifier: string;
   password: string;
 };
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+  const { login } = useAuthContext();
+
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -18,9 +26,19 @@ const AdminLogin = () => {
     formState: { errors },
   } = useForm<LoginFormInputs>();
 
-  const onSubmit = (data: LoginFormInputs) => {
-    console.log("Login form data:", data);
-    navigate("/admin/dashboard");
+  const onSubmit = async (data: LoginFormInputs) => {
+    try {
+      setLoading(true);
+      const response = await api.post("/auth/login", data);
+      const { message, accessToken, refreshToken, user } = response.data;
+      login(user, accessToken);
+      toast.success("Login Successful");
+      navigate("/admin/dashboard");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,7 +48,12 @@ const AdminLogin = () => {
         <div className="flex flex-col gap-12 flex-1">
           <div className="flex justify-between items-start gap-2 sm:gap-6 max-sm:flex-col">
             <div>
-              <h1 className="text-2xl font-bold">Welcome to Sahaara!</h1>
+              <h1 className="text-2xl font-bold">
+                Welcome to{" "}
+                <span className="text-app-primary-color dark:text-app-secondary-color">
+                  Sahaara
+                </span>
+              </h1>
               <p className="text-app-secondary-text">Enter your credentials</p>
             </div>
             <div className="mt-2">
@@ -43,13 +66,13 @@ const AdminLogin = () => {
           >
             <div className="flex flex-col gap-4">
               <FormField
-                label="Username"
-                id="username"
-                registration={register("username", {
-                  required: "Username is required",
+                label="Identifier"
+                id="identifier"
+                registration={register("identifier", {
+                  required: "Identifier is required",
                 })}
-                error={errors.username}
-                placeholder="Enter your username"
+                error={errors.identifier}
+                placeholder="Enter your identifier"
               />
               <FormField
                 label="Password"
@@ -57,12 +80,23 @@ const AdminLogin = () => {
                 registration={register("password", {
                   required: "Password is required",
                 })}
+                type="password"
                 error={errors.password}
                 placeholder="Enter your password"
               />
             </div>
             <div>
-              <Button className="w-full">Login</Button>
+              <Button
+                className="w-full bg-app-primary-color dark:bg-app-primary-color text-white border-0 dark:border hover:bg-app-primary-hover-color hover:text-white"
+                disabled={loading}
+              >
+                <span>
+                  <Loader2
+                    className={`animate-spin ${!loading ? "hidden" : "block"}`}
+                  />
+                </span>
+                Login
+              </Button>
             </div>
           </form>
         </div>

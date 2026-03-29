@@ -1,69 +1,49 @@
-# React + TypeScript + Vite
+# Sahaara Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the web frontend for Sahaara, a smart, real-time, hyperlocal community support platform, built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Prerequisites
+- Node.js (v18 or higher recommended)
+- npm (or yarn/pnpm)
 
-## Expanding the ESLint configuration
+### Installation
+1. Navigate to the web directory:
+   ```bash
+   cd sahaara-web
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up environment variables:
+   Create a `.env` file in the root directory (or `.env.local`) and configure necessary variables (e.g., API URL for the backend).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Running the Application
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**Development Mode**
+Starts the Vite development server with Hot Module Replacement (HMR).
+```bash
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**Production Build**
+Builds the app for production to the `dist` folder. It also runs TypeScript checks.
+```bash
+npm run build
+```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+**Preview Production Build**
+Locally preview the production build generated in the `dist` folder.
+```bash
+npm run preview
+```
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Additional Commands
+
+**Linting**
+Run ESLint to check for code quality and formatting issues.
+```bash
+npm run lint
 ```

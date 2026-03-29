@@ -19,6 +19,7 @@ const badgeColorSchemes: Record<BadgeType, Record<string, string>> = {
       "bg-[var(--app-primary-color)]/20 text-[var(--app-primary-color)] border border-[var(--app-primary-color)]",
     active:
       "bg-[var(--app-primary-color)]/20 text-[var(--app-primary-color)] border border-[var(--app-primary-color)]",
+    inactive: "bg-red-500/20 text-red-700 border border-red-500",
     completed: "bg-green-500/20 text-green-700 border border-green-500",
     cancelled: "bg-red-500/20 text-red-700 border border-red-500",
     expired: "bg-gray-500/20 text-gray-700 border border-gray-500",
@@ -27,7 +28,9 @@ const badgeColorSchemes: Record<BadgeType, Record<string, string>> = {
 
   moderation: {
     clean: "bg-green-500/20 text-green-700 border border-green-500",
+    verified: "bg-green-500/20 text-green-700 border border-green-500",
     flagged: "bg-yellow-400/20 text-yellow-700 border border-yellow-400",
+    unverified: "bg-yellow-400/20 text-yellow-700 border border-yellow-400",
     reviewed:
       "bg-[var(--app-primary-color)]/20 text-[var(--app-primary-color)] border border-[var(--app-primary-color)]",
     blocked: "bg-red-500/20 text-red-700 border border-red-500",

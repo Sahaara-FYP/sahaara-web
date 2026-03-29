@@ -30,11 +30,11 @@ type EditModerationProps<T> = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 
-  /** Either RequestType or AlertType */
+  /** Either RequestType, AlertType, or OfferType_ */
   item: T;
 
-  /** "request" | "alert" */
-  type: "request" | "alert";
+  /** "request" | "alert" | "offer" */
+  type: "request" | "alert" | "offer";
 
   /** API endpoint */
   endpoint: string;
@@ -96,6 +96,8 @@ export function EditModeration<T extends BaseModerationItem>({
       const payload =
         type === "request"
           ? { requestId: item.id, moderationStatus: selectedStatus }
+          : type === "offer"
+          ? { offerId: item.id, moderationStatus: selectedStatus }
           : { alertId: item.id, moderationStatus: selectedStatus };
 
       const response = await api.patch(endpoint, payload);

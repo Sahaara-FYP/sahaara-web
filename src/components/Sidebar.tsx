@@ -5,6 +5,9 @@ import {
   AlertCircle,
   CheckCircle,
   DoorOpen,
+  Package,
+  Flag,
+  Users,
 } from "lucide-react";
 
 import {
@@ -30,6 +33,11 @@ const items = [
     icon: Home,
   },
   {
+    title: "Users",
+    url: "/admin/users",
+    icon: Users,
+  },
+  {
     title: "Requests",
     url: "/admin/requests",
     icon: Inbox,
@@ -40,9 +48,19 @@ const items = [
     icon: AlertCircle,
   },
   {
+    title: "Offers",
+    url: "/admin/offers",
+    icon: Package,
+  },
+  {
     title: "Verifications",
-    url: "#",
+    url: "/admin/verifications",
     icon: CheckCircle,
+  },
+  {
+    title: "Reports",
+    url: "/admin/reports",
+    icon: Flag,
   },
   {
     title: "Settings",

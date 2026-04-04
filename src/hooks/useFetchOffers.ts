@@ -1,6 +1,6 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import api from "@/lib/api";
-import type { PaginatedOffersResponse } from "@/types/Offers";
+import type { PaginatedOffersResponse, OfferType_ } from "@/types/Offers";
 
 export async function fetchOffers(filters = {}): Promise<PaginatedOffersResponse> {
   const params = new URLSearchParams();
@@ -23,5 +23,17 @@ export function useFetchOffers(filters = {}) {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     staleTime: 1000 * 60 * 30,
+  });
+}
+
+export function useFetchOfferById(id: string | undefined) {
+  return useQuery<OfferType_>({
+    queryKey: ["offer", id],
+    queryFn: async () => {
+      const response = await api.get(`/offers/${id}`);
+      return response.data;
+    },
+    enabled: !!id,
+    refetchOnWindowFocus: false,
   });
 }

@@ -22,6 +22,30 @@ export interface OfferVolunteer {
   profilePictureUrl: string | null;
 }
 
+export enum InteractionStatus {
+  pending = "pending",
+  accepted = "accepted",
+  rejected = "rejected",
+  fulfilled = "fulfilled",
+  cancelled = "cancelled",
+}
+
+export interface OfferInteraction {
+  id: string;
+  status: InteractionStatus;
+  requestedQuantity: number | null;
+  message: string | null;
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    id: string;
+    fullName: string;
+    username: string | null;
+    email: string;
+    profilePictureUrl: string | null;
+  };
+}
+
 export interface OfferType_ {
   id: string;
   userId: string;
@@ -44,6 +68,7 @@ export interface OfferType_ {
   updatedAt: string;
   volunteer: OfferVolunteer;
   interactionsCount: number;
+  interactions?: OfferInteraction[];
 }
 
 export interface PaginatedOffersResponse {

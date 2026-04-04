@@ -10,6 +10,7 @@ import type { RequestType } from "@/types/Requests";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { AttachmentsCarousel } from "./AttachmentsCarousel";
+import { EnlargeableImage } from "@/components/EnlargeableImage";
 
 type RequestDetailsDialogProps = {
   open: boolean;
@@ -90,7 +91,7 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
               <Info label="Requester ID" value={requester.id} />
               {requester.profilePictureUrl && (
                 <Info label="Profile Picture">
-                  <img
+                  <EnlargeableImage
                     src={requester.profilePictureUrl}
                     alt="Requester"
                     className="h-20 w-20 rounded-lg object-cover border"

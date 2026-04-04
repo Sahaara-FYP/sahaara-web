@@ -247,7 +247,7 @@ const Offers = () => {
               </TableCell>
               <TableCell className="px-4 py-3 capitalize">{row.category}</TableCell>
               <TableCell className="px-4 py-3">
-                <StatusBadge type="default" value={row.type} className="bg-[var(--app-tertiary-color)]/20 text-[var(--app-tertiary-color)] border border-[var(--app-tertiary-color)]" />
+                <StatusBadge type="offerType" value={row.type} />
               </TableCell>
               <TableCell className="px-4 py-3">{timeAgo(row.createdAt)}</TableCell>
               <TableCell className="px-4 py-3">{row.interactionsCount ?? 0}</TableCell>

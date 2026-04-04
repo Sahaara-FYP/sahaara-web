@@ -30,7 +30,7 @@ export const VerificationDetailsDialog: React.FC<VerificationDetailsDialogProps>
   if (!verification) return null;
 
   const [adminNotes, setAdminNotes] = useState(verification.adminNotes || "");
-  const [loading, setLoading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
   const queryClient = useQueryClient();
 
@@ -40,9 +40,9 @@ export const VerificationDetailsDialog: React.FC<VerificationDetailsDialogProps>
     { src: verification.selfieWithCnicUrl, label: "Selfie with CNIC" },
   ];
 
-  const handleAction = async (status: "verified" | "rejected") => {
+  const handleAction = async (status: "verified" | "rejected" | "pending") => {
     try {
-      setLoading(true);
+      setLoadingAction(status);
       await api.patch(`/users/admin/verifications/${verification.id}/status`, {
         status,
         adminNotes,
@@ -53,12 +53,28 @@ export const VerificationDetailsDialog: React.FC<VerificationDetailsDialogProps>
     } catch (err: any) {
       toast.error(err.response?.data?.error || "Action failed");
     } finally {
-      setLoading(false);
+      setLoadingAction(null);
     }
   };
 
+  const handleSaveNotes = async () => {
+    try {
+      setLoadingAction("save_notes");
+      await api.patch(`/users/admin/verifications/${verification.id}/status`, {
+        status: verification.status,
+        adminNotes,
+      });
+      toast.success("Notes updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ["verifications"] });
+    } catch (err: any) {
+      toast.error(err.response?.data?.error || "Failed to update notes");
+    } finally {
+      setLoadingAction(null);
+    }
+  }
+
   const { user } = verification;
-  const isPending = verification.status === "pending";
+  const isLoading = loadingAction !== null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -139,40 +155,62 @@ export const VerificationDetailsDialog: React.FC<VerificationDetailsDialogProps>
           </Section>
 
           {/* Admin Notes */}
-          {isPending && (
-            <div className="grid gap-2">
-              <Label className="font-semibold text-app-secondary-text">
-                Admin Notes (Optional)
-              </Label>
-              <Textarea
-                placeholder="Add notes for this verification decision..."
-                value={adminNotes}
-                onChange={(e) => setAdminNotes(e.target.value)}
-                rows={3}
-              />
-            </div>
-          )}
+          <div className="grid gap-2">
+            <Label className="font-semibold text-app-secondary-text">
+              Admin Notes ({verification.status === "pending" ? "Optional" : "Update"})
+            </Label>
+            <Textarea
+              placeholder="Add notes for this verification decision..."
+              value={adminNotes}
+              onChange={(e) => setAdminNotes(e.target.value)}
+              rows={3}
+            />
+          </div>
         </div>
 
-        {isPending && (
-          <DialogFooter className="flex gap-2 pt-2">
+        <DialogFooter className="flex gap-2 pt-2 border-t mt-4">
+          {verification.status !== "pending" && (
+            <Button
+              variant="ghost"
+              className="text-app-secondary-text mr-auto hover:bg-gray-100"
+              disabled={isLoading}
+              onClick={() => handleAction("pending")}
+            >
+              {loadingAction === "pending" ? "Resetting..." : "Reset to Pending"}
+            </Button>
+          )}
+
+          {verification.status !== "rejected" && (
             <Button
               variant="outline"
               className="border-red-500 text-red-600 hover:bg-red-50"
-              disabled={loading}
+              disabled={isLoading}
               onClick={() => handleAction("rejected")}
             >
-              {loading ? "Processing..." : "Reject"}
+              {loadingAction === "rejected" ? "Rejecting..." : "Reject"}
             </Button>
+          )}
+
+          {verification.status !== "verified" && (
             <Button
               className="bg-app-primary-color hover:bg-app-primary-hover-color text-white"
-              disabled={loading}
+              disabled={isLoading}
               onClick={() => handleAction("verified")}
             >
-              {loading ? "Processing..." : "Verify User"}
+              {loadingAction === "verified" ? "Verifying..." : "Verify User"}
             </Button>
-          </DialogFooter>
-        )}
+          )}
+
+          {verification.status !== "pending" && adminNotes !== (verification.adminNotes || "") && (
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              disabled={isLoading}
+              onClick={handleSaveNotes}
+            >
+              {loadingAction === "save_notes" ? "Saving..." : "Save Notes Only"}
+            </Button>
+          )}
+        </DialogFooter>
       </DialogContent>
 
       {/* Full-screen Carousel Overlay (Nested Dialog) */}

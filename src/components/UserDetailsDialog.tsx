@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Label } from "./ui/label";
 import { UserIcon, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { EnlargeableImage } from "./EnlargeableImage";
 
 type UserDetailsDialogProps = {
   open: boolean;
@@ -80,7 +81,7 @@ export const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({
           <Section title="Profile Overview">
             <div className="flex items-center gap-4 py-2 mb-4">
               {user.profilePictureUrl ? (
-                <img
+                <EnlargeableImage
                   src={user.profilePictureUrl}
                   alt={user.fullName}
                   className="w-16 h-16 rounded-full object-cover border-2 shadow-sm"

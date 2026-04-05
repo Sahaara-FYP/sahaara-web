@@ -12,7 +12,13 @@ import { AttachmentsCarousel } from "./AttachmentsCarousel";
 import { EnlargeableImage } from "@/components/EnlargeableImage";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useFetchOfferById } from "@/hooks/useFetchOffers";
-import { ChevronDown, ChevronUp, Loader2, MessageSquare, User } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  MessageSquare,
+  User,
+} from "lucide-react";
 
 type OfferDetailsDialogProps = {
   open: boolean;
@@ -30,7 +36,7 @@ export const OfferDetailsDialog: React.FC<OfferDetailsDialogProps> = ({
   const isAdmin = adminDetails?.role === "admin";
 
   const { data: fullOffer, isLoading: isLoadingDetails } = useFetchOfferById(
-    open && isAdmin ? initialOffer.id : undefined
+    open && isAdmin ? initialOffer.id : undefined,
   );
 
   if (!initialOffer) return null;
@@ -40,20 +46,25 @@ export const OfferDetailsDialog: React.FC<OfferDetailsDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl sm:text-2xl font-bold text-app-primary-color">
-            {offer.title}
-          </DialogTitle>
-          <DialogDescription className="text-sm sm:text-base text-app-secondary-text">
-            Detailed information about this offer.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-h-[90vh] max-w-2xl bg-[#020617] border border-white/10 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] text-white p-0 overflow-hidden flex flex-col">
+        <div className="p-8 border-b border-white/5 bg-white/[0.02] flex-shrink-0">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-white tracking-tight">
+              {offer.title}
+            </DialogTitle>
+            <DialogDescription className="text-sm font-medium text-white/50">
+              Comprehensive details for this community offer.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
 
-        <div className="space-y-3">
+        <div className="flex-1 overflow-y-auto p-8 space-y-3 custom-scrollbar">
           {/* ===== Offer Information ===== */}
           <Section title="Offer Information">
-            <Info label="Description" value={offer.description || "No description"} />
+            <Info
+              label="Description"
+              value={offer.description || "No description"}
+            />
             <Info label="Category" value={offer.category} />
             <Info label="Type" value={offer.type} highlight />
             <Info label="Status">
@@ -77,7 +88,10 @@ export const OfferDetailsDialog: React.FC<OfferDetailsDialogProps> = ({
           {offer.type === "resource" && (
             <Section title="Resource Details">
               <Info label="Total Quantity" value={offer.totalQuantity ?? "—"} />
-              <Info label="Remaining Quantity" value={offer.remainingQuantity ?? "—"} />
+              <Info
+                label="Remaining Quantity"
+                value={offer.remainingQuantity ?? "—"}
+              />
               <Info label="Unit" value={offer.unit || "—"} />
             </Section>
           )}
@@ -110,108 +124,137 @@ export const OfferDetailsDialog: React.FC<OfferDetailsDialogProps> = ({
 
           {/* ===== System Info ===== */}
           <Section title="System Information">
-            <Info label="Interactions" value={offer.interactions?.length ?? offer.interactionsCount ?? 0} />
+            <Info
+              label="Interactions"
+              value={offer.interactions?.length ?? offer.interactionsCount ?? 0}
+            />
             <Info
               label="Created At"
-              value={offer.createdAt ? new Date(offer.createdAt).toLocaleString() : "N/A"}
+              value={
+                offer.createdAt
+                  ? new Date(offer.createdAt).toLocaleString()
+                  : "N/A"
+              }
             />
             <Info
               label="Updated At"
-              value={offer.updatedAt ? new Date(offer.updatedAt).toLocaleString() : "N/A"}
+              value={
+                offer.updatedAt
+                  ? new Date(offer.updatedAt).toLocaleString()
+                  : "N/A"
+              }
             />
             <Info
               label="Expires At"
-              value={offer.expiresAt ? new Date(offer.expiresAt).toLocaleString() : "—"}
+              value={
+                offer.expiresAt
+                  ? new Date(offer.expiresAt).toLocaleString()
+                  : "—"
+              }
             />
           </Section>
 
           {/* ===== Admin: Offer Interactions ===== */}
           {isAdmin && (
-            <div className="border border-app-background rounded-lg overflow-hidden bg-app-background/5">
+            <div className="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
               <button
                 onClick={() => setIsInteractionsOpen(!isInteractionsOpen)}
-                className="w-full flex items-center justify-between p-4 hover:bg-app-background/10 transition-colors"
+                className="w-full flex items-center justify-between p-5 hover:bg-white/[0.08] transition-all"
               >
-                <div className="flex items-center gap-2">
-                  <MessageSquare size={18} className="text-app-primary-color" />
-                  <h3 className="font-semibold text-app-primary-color">
-                    User Interactions ({offer.interactions?.length ?? offer.interactionsCount ?? 0})
+                <div className="flex items-center gap-3">
+                  <MessageSquare size={18} className="text-indigo-400" />
+                  <h3 className="font-bold text-white tracking-wide">
+                    User Interactions (
+                    {offer.interactions?.length ?? offer.interactionsCount ?? 0}
+                    )
                   </h3>
                 </div>
                 {isInteractionsOpen ? (
-                  <ChevronUp size={20} className="text-app-secondary-text" />
+                  <ChevronUp size={20} className="text-white/30" />
                 ) : (
-                  <ChevronDown size={20} className="text-app-secondary-text" />
+                  <ChevronDown size={20} className="text-white/30" />
                 )}
               </button>
 
               {isInteractionsOpen && (
-                <div className="p-4 pt-0 space-y-4 max-h-[400px] overflow-y-auto divide-y divide-app-background/20">
+                <div className="p-5 pt-0 space-y-4 max-h-[400px] overflow-y-auto divide-y divide-white/5">
                   {isLoadingDetails ? (
-                    <div className="flex flex-col items-center justify-center py-8 text-app-secondary-text">
-                      <Loader2 className="h-8 w-8 animate-spin mb-2" />
-                      <p className="text-sm">Fetching interaction history...</p>
+                    <div className="flex flex-col items-center justify-center py-12 text-white/30">
+                      <Loader2 className="h-8 w-8 animate-spin mb-3 text-indigo-500" />
+                      <p className="text-[11px] font-bold uppercase tracking-widest">
+                        Fetching interaction history...
+                      </p>
                     </div>
                   ) : offer.interactions && offer.interactions.length > 0 ? (
                     offer.interactions.map((interaction) => (
-                      <div key={interaction.id} className="py-4 first:pt-0">
+                      <div key={interaction.id} className="py-5 first:pt-0">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex items-center gap-3">
                             {interaction.user.profilePictureUrl ? (
                               <EnlargeableImage
                                 src={interaction.user.profilePictureUrl}
                                 alt={interaction.user.fullName}
-                                className="h-10 w-10 rounded-full object-cover border bg-app-background"
+                                className="h-11 w-11 rounded-full object-cover border border-white/10 ring-2 ring-white/5"
                               />
                             ) : (
-                              <div className="h-10 w-10 rounded-full bg-app-background border flex items-center justify-center text-gray-400 flex-shrink-0">
-                                <User size={20} />
+                              <div className="h-11 w-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/20 flex-shrink-0">
+                                <User size={22} />
                               </div>
                             )}
                             <div>
-                              <p className="font-bold text-app-primary-text text-sm">
+                              <p className="font-bold text-white text-[14px]">
                                 {interaction.user.fullName}
                               </p>
-                              <p className="text-xs text-app-secondary-text">
+                              <p className="text-[12px] text-white/40">
                                 {interaction.user.email}
-                              </p>
-                              <p className="text-[10px] text-app-secondary-text/70 mt-0.5">
-                                @{interaction.user.username || "no-username"}
                               </p>
                             </div>
                           </div>
-                          <StatusBadge type="status" value={interaction.status} className="text-[10px] min-w-0" />
+                          <StatusBadge
+                            type="status"
+                            value={interaction.status}
+                            className="text-[10px] min-w-0"
+                          />
                         </div>
 
-                        <div className="mt-3 bg-white/50 p-3 rounded-md border border-app-background/10 shadow-sm">
+                        <div className="mt-4 bg-white/5 p-4 rounded-xl border border-white/10 shadow-inner">
                           {offer.type === "resource" ? (
-                            <div className="flex items-center gap-2 text-sm text-app-primary-text">
-                              <span className="font-semibold">Requested:</span>
-                              <span className="bg-app-primary-color/10 text-app-primary-color px-2 py-0.5 rounded text-xs font-mono">
+                            <div className="flex items-center gap-2 text-sm text-white/80">
+                              <span className="font-bold text-white/40">
+                                Requested:
+                              </span>
+                              <span className="bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-lg text-xs font-black">
                                 {interaction.requestedQuantity} {offer.unit}
                               </span>
                             </div>
                           ) : (
-                            <div className="space-y-1">
-                              <p className="text-xs font-semibold text-app-secondary-text uppercase tracking-wider">
-                                Inquiry Message:
+                            <div className="space-y-2">
+                              <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
+                                Inquiry Message
                               </p>
-                              <p className="text-sm text-app-primary-text italic leading-relaxed">
-                                "{interaction.message || "No message provided."}"
+                              <p className="text-[13px] text-white/90 italic leading-relaxed">
+                                {interaction.message
+                                  ? `"${interaction.message}"`
+                                  : "No message provided."}
                               </p>
                             </div>
                           )}
-                          <div className="mt-2 flex items-center gap-1 text-[10px] text-app-secondary-text/80 justify-end">
-                            <span>Interacted at:</span>
-                            <span>{new Date(interaction.createdAt).toLocaleString()}</span>
+                          <div className="mt-3 flex items-center gap-1 text-[10px] text-white/20 justify-end font-bold uppercase tracking-wider">
+                            <span>
+                              {new Date(
+                                interaction.createdAt,
+                              ).toLocaleDateString()}
+                            </span>
                           </div>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-10 text-app-secondary-text bg-white/30 rounded-lg">
-                      <User size={32} className="opacity-20 mb-2" />
-                      <p className="text-sm italic">No users have interacted with this offer yet.</p>
+                    <div className="flex flex-col items-center justify-center py-12 text-white/20 bg-white/[0.02] rounded-2xl mx-1 shadow-inner">
+                      <User size={32} className="opacity-10 mb-3" />
+                      <p className="text-[11px] font-bold uppercase tracking-widest">
+                        No activity found.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -227,9 +270,11 @@ export const OfferDetailsDialog: React.FC<OfferDetailsDialogProps> = ({
 /* ===== Reusable Sub-components ===== */
 type SectionProps = { title: string; children: React.ReactNode };
 const Section: React.FC<SectionProps> = ({ title, children }) => (
-  <div className="border border-app-background rounded-lg p-4">
-    <h3 className="font-semibold text-app-primary-color mb-3">{title}</h3>
-    <div className="divide-y divide-app-background">{children}</div>
+  <div className="border border-white/10 rounded-2xl p-5 bg-white/5 shadow-sm">
+    <h3 className="font-bold text-white tracking-wide mb-4 text-[13px] uppercase opacity-70">
+      {title}
+    </h3>
+    <div className="divide-y divide-white/5">{children}</div>
   </div>
 );
 
@@ -239,12 +284,17 @@ type InfoProps = {
   highlight?: boolean;
   children?: React.ReactNode;
 };
-const Info: React.FC<InfoProps> = ({ label, value, highlight = false, children }) => (
-  <div className="py-2 grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-3 items-start text-sm sm:text-base">
-    <span className="font-semibold text-app-secondary-text">{label}:</span>
+const Info: React.FC<InfoProps> = ({
+  label,
+  value,
+  highlight = false,
+  children,
+}) => (
+  <div className="py-3 grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-3 items-start text-sm">
+    <span className="font-medium text-white/40">{label}:</span>
     <span
-      className={`sm:col-span-3 break-words ${
-        highlight ? "font-medium text-app-primary-color capitalize" : ""
+      className={`sm:col-span-2 break-words font-semibold text-white/90 ${
+        highlight ? "text-indigo-400 capitalize" : ""
       }`}
     >
       {children || value}

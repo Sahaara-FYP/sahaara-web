@@ -1,16 +1,17 @@
 import { Loader2 } from "lucide-react";
-import React from "react";
 
 const LoaderOverlay = ({ message = "Loading...", show = false }) => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center backdrop-blur-md bg-black/30 min-h-full">
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center backdrop-blur-md bg-[#020617]/60 min-h-full">
       {/* Spinner */}
-      <Loader2 className="animate-spin" />
+      <Loader2 className="animate-spin text-indigo-400 w-10 h-10 mb-4" />
 
       {/* Optional text */}
-      <p className="text-white text-lg font-medium">{message}</p>
+      <p className="text-white/80 text-sm font-medium tracking-wide">
+        {message}
+      </p>
     </div>
   );
 };

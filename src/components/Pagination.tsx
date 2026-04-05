@@ -48,8 +48,9 @@ export default function AppPagination({
     <div
       className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${className}`}
     >
-      <span className="text-sm text-muted-foreground w-full">
-        Page {page} of {totalPages} ({pagination.total} results)
+      <span className="text-sm text-white/50 font-medium w-full">
+        Page {page} of {totalPages}{" "}
+        <span className="text-white/30 mx-1">|</span> {pagination.total} entries
       </span>
 
       <Pagination className="justify-end">
@@ -59,7 +60,7 @@ export default function AppPagination({
               onClick={() => hasPrevPage && onPageChange(page - 1)}
               className={`${
                 !hasPrevPage ? "pointer-events-none opacity-50" : ""
-              } bg-app-primary-color border-none text-white hover:text-white hover:bg-app-primary-hover-color cursor-pointer`}
+              } bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 transition-all cursor-pointer`}
             />
           </PaginationItem>
           <div className="flex gap-1">
@@ -71,16 +72,14 @@ export default function AppPagination({
                     isActive={num === page}
                     className={
                       num === page
-                        ? "bg-app-primary-color border-none text-white hover:text-white hover:bg-app-primary cursor-default"
-                        : "bg-app-foreground border hover:bg-neutral-200 cursor-pointer"
+                        ? "bg-indigo-600 border border-indigo-500/50 shadow-md shadow-indigo-500/20 text-white font-medium transition-all cursor-default"
+                        : "bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 font-medium hover:text-white transition-all cursor-pointer"
                     }
                   >
                     {num}
                   </PaginationLink>
                 ) : (
-                  <span className="px-2 text-muted-foreground select-none">
-                    ...
-                  </span>
+                  <span className="px-2 text-white/30 select-none">...</span>
                 )}
               </PaginationItem>
             ))}
@@ -91,7 +90,7 @@ export default function AppPagination({
               onClick={() => hasNextPage && onPageChange(page + 1)}
               className={`${
                 !hasNextPage ? "pointer-events-none opacity-50" : ""
-              } bg-app-primary-color border-none text-white hover:text-white hover:bg-app-primary-hover-color cursor-pointer`}
+              } bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 transition-all cursor-pointer`}
             />
           </PaginationItem>
         </PaginationContent>

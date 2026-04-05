@@ -14,7 +14,7 @@ import Users from "./pages/Users";
 const App = () => {
   return (
     <BrowserRouter>
-      <Toaster position="top-right" closeButton={true} />
+      <Toaster position="bottom-right" richColors />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin/login" element={<AdminLogin />} />

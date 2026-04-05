@@ -79,13 +79,6 @@ const AppSidebar = () => {
         <SidebarGroup>
           <SidebarGroupLabel className="flex gap-2 items-center">
             <div>
-              <img
-                src="/admin-login-illustration.webp"
-                width={30}
-                height={30}
-              />
-            </div>
-            <div>
               <h2 className="text-2xl font-semibold text-app-primary-color dark:text-app-secondary-color">
                 Sahaara
               </h2>
@@ -134,9 +127,6 @@ const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="mb-2 flex flex-col gap-4 py-6 pl-6">
-        <div>
-          <DarkModeToggle type="text" />
-        </div>
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-[50%] bg-app-background"></div>
           <div className="mb-1">

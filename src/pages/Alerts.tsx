@@ -22,15 +22,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useFetchRequests } from "@/hooks/useFetchRequests";
-import { StatusBadge } from "@/components/StatusBadge";
-import { RequestDetailsDialog } from "@/components/RequestDetailsDialog";
-import {
-  ModerationStatusItems,
-  UrgencyLevelItems,
-  type RequestType,
-} from "@/types/Requests";
-import { camelToWords } from "./../utils/Normalise";
 import LoaderOverlay from "@/components/Loader";
 import { EditModeration } from "@/components/EditModeration";
 import { handleSort } from "@/utils/sortHandler";
@@ -47,6 +38,10 @@ import {
 import { AlertDetailsDialog } from "@/components/AlertsDetailsDialog";
 import { useOutletContext } from "react-router-dom";
 import { timeAgo } from "@/utils/timeAgo";
+import { motion } from "framer-motion";
+import { ModerationStatusItems, UrgencyLevelItems } from "@/types/Requests";
+import { camelToWords } from "@/utils/Normalise";
+import { StatusBadge } from "@/components/StatusBadge";
 
 /* ---------------------------- TYPES ---------------------------- */
 
@@ -62,16 +57,13 @@ type FilterState = {
 };
 
 // allowed sortable column keys
-const sortableKeys = [
-  "title",
-  "category",
-  "urgencyLevel",
-  "status",
-  "moderationStatus",
-  "createdAt",
-] as const;
-
-type SortKey = (typeof sortableKeys)[number];
+type SortKey =
+  | "title"
+  | "category"
+  | "urgencyLevel"
+  | "status"
+  | "moderationStatus"
+  | "createdAt";
 
 type AdminContext = {
   setResetFilters: (fn: () => void) => void;
@@ -110,7 +102,7 @@ const Alerts = () => {
 
   useEffect(() => {
     setResetFilters(() => handleResetFilters);
-  }, []);
+  }, [setResetFilters]);
 
   const { data, error, isLoading, isFetching, isPending, isRefetching } =
     useFetchAlerts(filter);
@@ -133,6 +125,20 @@ const Alerts = () => {
 
   /* ---------------------------- RENDER ---------------------------- */
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
   const handlePageChange = (newPage: number) => {
     setFilter((prev) => ({
       ...prev,
@@ -145,18 +151,26 @@ const Alerts = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="space-y-6 pb-20"
+    >
       <LoaderOverlay
         show={isLoading || isFetching || isPending || isRefetching}
       />
       {/* Search + Filters */}
-      <div className="bg-app-foreground p-4 shadow rounded-lg">
-        <div className="grid gap-4 sm:grid-cols-3">
+      <motion.div
+        variants={item}
+        className="bg-white/5 p-6 shadow-xl shadow-black/20 border border-white/10 rounded-2xl backdrop-blur-md"
+      >
+        <div className="grid gap-6 sm:grid-cols-3">
           {/* Search Input */}
-          <div className="flex flex-col gap-2">
-            <div className="relative">
+          <div className="flex flex-col gap-3">
+            <div className="relative group">
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-indigo-400 transition-colors"
                 size={18}
               />
               <Input
@@ -166,11 +180,11 @@ const Alerts = () => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleSearch();
                 }}
-                className="w-full pl-9"
+                className="w-full pl-12 h-12 bg-[#020617]/40 border-white/10 focus-visible:border-indigo-500/50 focus-visible:ring-indigo-500/50 text-white rounded-xl placeholder:text-white/20 transition-all font-medium"
               />
             </div>
             <Button
-              className="w-full bg-app-primary-color hover:bg-app-primary-hover-color"
+              className="w-full h-12 bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 rounded-xl font-bold tracking-wide transition-all"
               onClick={handleSearch}
             >
               Search
@@ -178,21 +192,11 @@ const Alerts = () => {
           </div>
 
           {/* Filters Section */}
-          <div
-            className="
-       grid
-    grid-cols-2
-    sm:grid-cols-2
-    md:grid-cols-2
-    lg:grid-cols-2
-    gap-4
-    col-span-2
-      "
-          >
+          <div className="grid grid-cols-2 gap-4 col-span-2">
             {(
               Object.entries(filterConfig) as [
                 keyof typeof filterConfig,
-                string[]
+                string[],
               ][]
             ).map(([key, options]) => (
               <Select
@@ -205,12 +209,22 @@ const Alerts = () => {
                   })
                 }
               >
-                <SelectTrigger className="w-full capitalize">
+                <SelectTrigger className="w-full capitalize h-12 bg-[#020617]/40 border-white/10 text-white/90 rounded-xl font-semibold focus:ring-indigo-500/50 hover:bg-[#020617]/60 transition-all">
                   <SelectValue placeholder={camelToWords(key)[0]} />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-[#020617] border border-white/10 text-white/90 rounded-xl shadow-2xl backdrop-blur-xl">
+                  <SelectItem
+                    value="all"
+                    className="font-semibold text-white/40 focus:bg-white/5 cursor-pointer"
+                  >
+                    All {camelToWords(key).join(" ")}
+                  </SelectItem>
                   {options.map((opt) => (
-                    <SelectItem className="capitalize" key={opt} value={opt}>
+                    <SelectItem
+                      className="capitalize font-semibold focus:bg-white/10 focus:text-white cursor-pointer"
+                      key={opt}
+                      value={opt}
+                    >
                       {opt}
                     </SelectItem>
                   ))}
@@ -219,135 +233,147 @@ const Alerts = () => {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Table */}
-      <Table className="bg-app-foreground shadow-md overflow-hidden rounded-lg">
-        <TableCaption className="text-app-secondary-color text-sm py-2">
-          Recent community requests
-        </TableCaption>
+      {/* Table Section */}
+      <motion.div variants={item}>
+        <Table className="bg-white/5 shadow-2xl shadow-black/40 overflow-hidden rounded-2xl border border-white/10 ring-1 ring-white/5 mx-0.5 backdrop-blur-sm">
+          <TableCaption className="text-white/30 font-medium text-[11px] tracking-[0.2em] uppercase py-8">
+            Community Alerts Log
+          </TableCaption>
 
-        <TableHeader>
-          <TableRow className="bg-app-foreground border-b">
-            {[
-              { key: "title", label: "Title", sortable: true },
-              { key: "category", label: "Category", sortable: true },
-              { key: "createdAt", label: "Posted At", sortable: true },
-              { key: "urgencyLevel", label: "Urgency", sortable: true },
-              { key: "status", label: "Status", sortable: true },
-              { key: "moderationStatus", label: "Moderation", sortable: true },
-              { key: "actions", label: "Actions", sortable: false },
-            ].map((col, i) => (
-              <TableHead
-                key={i}
-                onClick={() =>
-                  col.sortable && handleSort(col.key as SortKey, setSortConfig)
-                }
-                className={`px-4 py-3 font-semibold text-app-primary-text cursor-pointer select-none
-                  ${
-                    col.label === "Title"
-                      ? "w-[250px] text-left"
-                      : col.label === "Actions"
-                      ? "text-right w-[150px] justify-end"
-                      : "w-[150px] text-center"
+          <TableHeader>
+            <TableRow className="bg-white/[0.02] border-white/10 hover:bg-transparent">
+              {[
+                { key: "title", label: "Title", sortable: true },
+                { key: "category", label: "Category", sortable: true },
+                { key: "createdAt", label: "Date", sortable: true },
+                { key: "urgencyLevel", label: "Urgency", sortable: true },
+                { key: "status", label: "Status", sortable: true },
+                {
+                  key: "moderationStatus",
+                  label: "Moderation",
+                  sortable: true,
+                },
+                { key: "actions", label: "Actions", sortable: false },
+              ].map((col, i) => (
+                <TableHead
+                  key={i}
+                  onClick={() =>
+                    col.sortable &&
+                    handleSort(col.key as SortKey, setSortConfig)
                   }
-                  ${col.sortable ? "hover:text-app-primary-color" : ""}
-                `}
-              >
-                <div
-                  className={`flex items-center ${
-                    col.label === "Actions"
-                      ? "justify-center"
-                      : "justify-center sm:justify-start"
-                  }`}
+                  className={`px-8 py-6 font-bold text-[10px] uppercase tracking-[0.15em] text-white/30 cursor-pointer select-none transition-all
+                    ${col.label === "Title" ? "w-[300px] text-left" : col.label === "Actions" ? "text-right w-[140px] justify-end" : "w-[130px] text-center"}
+                    ${col.sortable ? "hover:text-indigo-400" : ""}
+                  `}
                 >
-                  {col.label}
-                  {col.sortable && (
-                    <SortArrow
-                      column={col.key as SortKey}
-                      sortConfig={sortConfig}
-                    />
-                  )}
-                </div>
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {sortedData.map((row, idx) => (
-            <TableRow
-              key={idx}
-              className="hover:bg-app-background/70 transition-colors "
-            >
-              <TableCell
-                className="px-4 py-3 text-left w-[200px] max-w-[200px] truncate whitespace-nowrap overflow-hidden"
-                title={row.title}
-              >
-                {row.title}
-              </TableCell>
-              <TableCell className="px-4 py-3 capitalize">
-                {row.category}
-              </TableCell>
-              <TableCell className="px-4 py-3">
-                {timeAgo(row.createdAt)}
-              </TableCell>
-              <TableCell>
-                <StatusBadge type="urgency" value={row.urgencyLevel} />
-              </TableCell>
-              <TableCell className="px-4 py-3">
-                <StatusBadge type="status" value={row.status} />
-              </TableCell>
-              <TableCell>
-                <StatusBadge type="moderation" value={row.moderationStatus} />
-              </TableCell>
-              <TableCell className="px-4 py-3 text-center text-app-secondary-text ">
-                <DropdownMenu
-                  open={openDropdownId === row.id}
-                  onOpenChange={(isOpen) =>
-                    setOpenDropdownId(isOpen ? row.id : null)
-                  }
-                >
-                  <DropdownMenuTrigger asChild>
-                    <button className="p-1 rounded-sm hover:bg-app-background transition">
-                      <MoreVertical className="w-5 h-5 text-app-primary-text" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setSelectedRow(row);
-                        setOpenViewDetailsDialog(true);
-                        setOpenDropdownId(null);
-                      }}
-                    >
-                      View Details
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setSelectedRow(row);
-                        setOpenEditModeration(true);
-                        setOpenDropdownId(null);
-                      }}
-                    >
-                      Edit Moderation
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
+                  <div
+                    className={`flex items-center ${col.label === "Actions" ? "justify-center" : col.label === "Title" ? "justify-start" : "justify-center"}`}
+                  >
+                    {col.label}
+                    {col.sortable && (
+                      <SortArrow
+                        column={col.key as SortKey}
+                        sortConfig={sortConfig}
+                      />
+                    )}
+                  </div>
+                </TableHead>
+              ))}
             </TableRow>
-          ))}
-          {sortedData.length === 0 && (
-            <TableCell colSpan={8} className="py-4 text-center w-full">
-              No Alerts Found
-            </TableCell>
-          )}
-        </TableBody>
-      </Table>
-      <Pagination
-        pagination={data.pagination}
-        onPageChange={handlePageChange}
-      />
+          </TableHeader>
+
+          <TableBody>
+            {sortedData.map((row, idx) => (
+              <TableRow
+                key={idx}
+                className="group border-white/5 transition-all duration-200 hover:bg-white/[0.03]"
+              >
+                <TableCell
+                  className="px-8 py-6 text-left font-bold text-white tracking-tight"
+                  title={row.title}
+                >
+                  <div className="truncate max-w-[280px]">{row.title}</div>
+                </TableCell>
+                <TableCell className="px-8 py-6 text-center">
+                  <span className="bg-white/5 text-white/60 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-white/10">
+                    {row.category}
+                  </span>
+                </TableCell>
+                <TableCell className="px-8 py-6 text-center font-bold text-white/50 text-[13px] tracking-tight">
+                  {timeAgo(row.createdAt)}
+                </TableCell>
+                <TableCell className="px-8 py-6 text-center">
+                  <StatusBadge type="urgency" value={row.urgencyLevel} />
+                </TableCell>
+                <TableCell className="px-8 py-6 text-center">
+                  <StatusBadge type="status" value={row.status} />
+                </TableCell>
+                <TableCell className="px-8 py-6 text-center">
+                  <StatusBadge type="moderation" value={row.moderationStatus} />
+                </TableCell>
+                <TableCell className="px-8 py-6 text-center">
+                  <DropdownMenu
+                    open={openDropdownId === row.id}
+                    onOpenChange={(isOpen) =>
+                      setOpenDropdownId(isOpen ? row.id : null)
+                    }
+                  >
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-2.5 rounded-xl hover:bg-white/10 text-white/40 hover:text-white transition-all ring-1 ring-transparent hover:ring-white/10 hover:shadow-lg">
+                        <MoreVertical className="w-5 h-5" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="bg-[#020617] border border-white/10 text-white shadow-2xl rounded-2xl p-2 min-w-[200px] backdrop-blur-3xl animate-in fade-in zoom-in-95 ease-out duration-200">
+                      <DropdownMenuItem
+                        className="font-bold text-[11px] uppercase tracking-widest focus:bg-indigo-600 focus:text-white cursor-pointer rounded-xl h-11 px-5 transition-all"
+                        onClick={() => {
+                          setSelectedRow(row);
+                          setOpenViewDetailsDialog(true);
+                          setOpenDropdownId(null);
+                        }}
+                      >
+                        View Details
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="font-bold text-[11px] uppercase tracking-widest focus:bg-rose-600 focus:text-white cursor-pointer rounded-xl h-11 px-5 transition-all mt-1"
+                        onClick={() => {
+                          setSelectedRow(row);
+                          setOpenEditModeration(true);
+                          setOpenDropdownId(null);
+                        }}
+                      >
+                        Edit Moderation
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
+            {sortedData.length === 0 && (
+              <TableRow className="hover:bg-transparent border-none">
+                <TableCell colSpan={7} className="py-32 text-center">
+                  <div className="flex flex-col items-center gap-4 opacity-10">
+                    <Search size={64} strokeWidth={1} />
+                    <p className="text-xs font-black tracking-[0.3em] uppercase">
+                      No Alerts Found
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </motion.div>
+
+      {/* Pagination Section */}
+      <motion.div variants={item} className="flex justify-end pt-4">
+        <Pagination
+          pagination={data.pagination}
+          onPageChange={handlePageChange}
+        />
+      </motion.div>
 
       {openViewDetailsDialog && (
         <AlertDetailsDialog
@@ -366,7 +392,7 @@ const Alerts = () => {
           queryKey="alerts"
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

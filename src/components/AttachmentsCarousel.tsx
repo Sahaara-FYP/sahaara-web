@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   Carousel,
   CarouselContent,
@@ -33,7 +32,7 @@ export function AttachmentsCarousel({
           return (
             <CarouselItem
               key={i}
-              className="flex items-center justify-center p-2"
+              className="flex items-center justify-center p-3"
             >
               {type === "image" ? (
                 // 🖼 Clickable image with hover zoom
@@ -41,7 +40,7 @@ export function AttachmentsCarousel({
                   <img
                     src={item}
                     alt={`Attachment ${i + 1}`}
-                    className="h-40 w-auto rounded-lg object-cover border shadow-sm transition-transform duration-200 hover:scale-105 cursor-pointer"
+                    className="h-44 w-auto rounded-2xl object-cover border border-white/10 shadow-2xl transition-all duration-500 hover:scale-105 active:scale-95 cursor-pointer ring-1 ring-white/5"
                   />
                 </a>
               ) : type === "video" ? (
@@ -49,18 +48,24 @@ export function AttachmentsCarousel({
                 <video
                   src={item}
                   controls
-                  className="h-40 w-auto rounded-lg border shadow-sm bg-black"
+                  className="h-44 w-auto rounded-2xl border border-white/10 shadow-2xl bg-black/40 backdrop-blur-md"
                 />
               ) : type === "audio" ? (
                 // 🎧 Audio player
-                <audio src={item} controls className="w-full/2 " />
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/10 w-full shadow-xl backdrop-blur-sm shadow-black/20">
+                  <audio
+                    src={item}
+                    controls
+                    className="w-full h-10 invert brightness-200 contrast-200"
+                  />
+                </div>
               ) : (
                 // 📄 Unknown file type fallback
                 <a
                   href={item}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 underline text-sm"
+                  className="bg-white/5 px-6 py-3 rounded-xl border border-white/10 text-indigo-400 font-bold text-sm tracking-wide hover:bg-indigo-600 hover:text-white transition-all shadow-lg"
                 >
                   View Attachment {i + 1}
                 </a>

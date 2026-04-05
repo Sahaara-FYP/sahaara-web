@@ -29,17 +29,19 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl sm:text-2xl font-bold text-app-primary-color">
-            {request.title}
-          </DialogTitle>
-          <DialogDescription className="text-sm sm:text-base text-app-secondary-text">
-            Detailed information about this request.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-h-[90vh] max-w-2xl bg-[#020617] border border-white/10 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] text-white p-0 overflow-hidden flex flex-col">
+        <div className="p-8 border-b border-white/5 bg-white/[0.02] flex-shrink-0">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-white tracking-tight">
+              {request.title}
+            </DialogTitle>
+            <DialogDescription className="text-sm font-medium text-white/50">
+              Comprehensive details for this community request.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
 
-        <div className="space-y-3 ">
+        <div className="flex-1 overflow-y-auto p-8 space-y-3 custom-scrollbar">
           {/* ===== Request Information ===== */}
           <Section title="Request Information">
             <Info
@@ -136,15 +138,18 @@ export const RequestDetailsDialog: React.FC<RequestDetailsDialogProps> = ({
                 value={new Date(request.completedAt).toLocaleString()}
               />
             )}
-            <Info label="Participants Count">
+            <Info label="Participants">
               <div className="flex items-center justify-between">
-                <span>{request.participantsCount}</span>
+                <span className="text-lg font-black text-indigo-400">
+                  {request.participantsCount}
+                </span>
                 <Button
                   variant="outline"
+                  className="border-indigo-500/30 text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 hover:text-indigo-300 h-9 text-xs font-bold"
                   size="sm"
                   onClick={() => console.log("View participants clicked")}
                 >
-                  View All
+                  View Details
                 </Button>
               </div>
             </Info>
@@ -162,9 +167,9 @@ type SectionProps = {
 };
 
 const Section: React.FC<SectionProps> = ({ title, children }) => (
-  <div className="border border-app-background rounded-lg p-4">
-    <h3 className="font-semibold text-app-primary-color mb-3">{title}</h3>
-    <div className="divide-y divide-app-background">{children}</div>
+  <div className="border border-white/10 rounded-2xl p-5 bg-white/5 shadow-sm">
+    <h3 className="font-semibold text-white tracking-wide mb-4">{title}</h3>
+    <div className="divide-y divide-white/5">{children}</div>
   </div>
 );
 
@@ -181,11 +186,11 @@ const Info: React.FC<InfoProps> = ({
   highlight = false,
   children,
 }) => (
-  <div className="py-2 grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-3 items-start text-sm sm:text-base">
-    <span className="font-semibold text-app-secondary-text">{label}:</span>
+  <div className="py-3 grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-3 items-start text-sm">
+    <span className="font-medium text-white/40">{label}:</span>
     <span
-      className={`sm:col-span-3 break-words ${
-        highlight ? "font-medium text-app-primary-color capitalize" : ""
+      className={`sm:col-span-2 break-words font-medium text-white/90 ${
+        highlight ? "text-indigo-400 capitalize" : ""
       }`}
     >
       {children || value}

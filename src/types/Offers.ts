@@ -2,6 +2,7 @@ import type { PaginationType } from "./Requests";
 import type { ModerationStatus } from "./Requests";
 
 export enum OfferStatus {
+  pendingApproval = "pending_approval",
   active = "active",
   paused = "paused",
   depleted = "depleted",
@@ -79,6 +80,7 @@ export interface PaginatedOffersResponse {
 
 export const OfferStatusItems = {
   all: "all",
+  pending_approval: "pending_approval",
   active: "active",
   paused: "paused",
   depleted: "depleted",

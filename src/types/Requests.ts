@@ -16,6 +16,7 @@ export enum RequestCategory {
 }
 
 export enum RequestStatus {
+  pendingApproval = "pending_approval",
   pending = "pending",
   partiallyAccepted = "partially_accepted",
   accepted = "accepted",
@@ -120,6 +121,7 @@ export const TrueFalseDropdownItems = {
 
 export const RequestStatusItems = {
   all: "all",
+  pending_approval: "pending_approval",
   pending: "pending",
   partially_accepted: "partially_accepted",
   accepted: "accepted",

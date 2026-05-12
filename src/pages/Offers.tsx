@@ -41,6 +41,9 @@ import { Button } from "@/components/ui/button";
 import { useOutletContext } from "react-router-dom";
 import { timeAgo } from "@/utils/timeAgo";
 import { motion } from "framer-motion";
+import api from "@/lib/api";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 /* ---------------------------- TYPES ---------------------------- */
 type FilterState = {
@@ -87,6 +90,23 @@ const Offers = () => {
   }>({ key: null, direction: null });
 
   const { setResetFilters } = useOutletContext<AdminContext>();
+  const queryClient = useQueryClient();
+
+  const [isApproving, setIsApproving] = useState<string | null>(null);
+
+  const handleApprove = async (id: string) => {
+    try {
+      setIsApproving(id);
+      await api.patch(`/admin/offers/${id}/approve`);
+      toast.success("Offer approved successfully");
+      queryClient.invalidateQueries({ queryKey: ["offers"] });
+    } catch (error) {
+      console.error("Approve error:", error);
+    } finally {
+      setIsApproving(null);
+      setOpenDropdownId(null);
+    }
+  };
 
   function handleResetFilters() {
     setFilter({ limit: 10, offset: 0 });
@@ -344,6 +364,18 @@ const Offers = () => {
                       >
                         Edit Moderation
                       </DropdownMenuItem>
+
+                      {row.status === "pending_approval" && (
+                        <DropdownMenuItem
+                          className="font-bold text-[11px] uppercase tracking-widest focus:bg-emerald-600 focus:text-white cursor-pointer rounded-xl h-11 px-5 transition-all mt-1"
+                          onClick={() => handleApprove(row.id)}
+                          disabled={isApproving === row.id}
+                        >
+                          {isApproving === row.id
+                            ? "Approving..."
+                            : "Approve Post"}
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
